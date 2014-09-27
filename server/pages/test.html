@@ -1,0 +1,19 @@
+<html>
+
+<head>
+	<script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+  <h1>Test page</h1>
+  <div id="msgs">
+  </div>
+
+  <script>
+	var socket = io();
+	socket.on('questions', function(msg){
+		document.getElementById('msgs').innerHTML += "<p>" + msg + "</p>";
+  	});
+  </script>
+</body>
+</html>

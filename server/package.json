@@ -1,0 +1,22 @@
+{
+  "name": "mobileclips",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "bookshelf": "^0.7.7",
+    "express": "^4.9.5",
+    "knex": "^0.6.22",
+    "passport-local": "^1.0.0",
+    "pg": "^3.4.4",
+    "socket.io": "^1.1.0",
+    "sqlite3": "^3.0.0",
+    "websocket": "^1.0.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
