@@ -6,7 +6,8 @@ var http      = require('http'),
     knex      = require('knex')({client: config.db_client, connection: config.db_url, debug: config.DEBUG}),
     bookshelf = require('bookshelf')(knex),
     models    = require('./models')(bookshelf),
-    notifier  = require('./notifier')
+    notifier  = require('./notifier'),
+    restful   = require('./bookshelf_rest')
     ;
 
 app = express();
@@ -38,6 +39,8 @@ notifier(bookshelf,
     }
   }
 )
+
+app.use('/resource', restful(models.Question, 'questions'));
 
 app.set('port', process.env.PORT || 5000);
 

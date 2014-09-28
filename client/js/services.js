@@ -4,6 +4,10 @@ angular.module('starter.services', [])
   return io()
 })
 
+.factory('Question', function($resource) {
+  return $resource('/resource/questions/:questionId');
+})
+
 /**
  * A simple example service that returns some data.
  */
