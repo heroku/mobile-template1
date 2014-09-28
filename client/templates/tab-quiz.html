@@ -1,0 +1,20 @@
+<ion-view title="Live Quiz">
+  <ion-content class="padding">
+
+	<div class="card">
+	  <div class="item item-text-wrap">
+	    {{q.question}}
+	  </div>
+	</div>
+
+    <form class="list">
+        <button class="button button-block button-stable" ng-repeat="choice in q.answers"
+                   ng-value="$index"
+                   ng-click="saveChoice($index)">
+            {{ choice }}
+        </button>
+    </form>
+
+    <button class="button button-block button-positive" disabled="true" ng-show="answer">{{answer}}</button>
+  </ion-content>
+</ion-view>
