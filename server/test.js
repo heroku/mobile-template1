@@ -1,30 +1,44 @@
-var knex = require('knex')({client: 'pg', connection: 'postgresql://notexists.com/nodb' });
-var bookshelf = require('bookshelf')(knex);
-
-var User = bookshelf.Model.extend({
-  tableName: 'users',
-  messages: function() {
-    return this.hasMany(Posts);
-  }
+var knex = require('knex')({
+  client: 'pg',
+  connection: 'postgresql://doesnotexist.com/doesnotexist'
 });
 
-var Posts = bookshelf.Model.extend({
-  tableName: 'messages',
-  tags: function() {
-    return this.belongsToMany(Tag);
-  }
-});
-
-var Tag = bookshelf.Model.extend({
-  tableName: 'tags'
+// Create a table
+knex.schema.createTable('users', function(table) {
+  table.increments('id');
+  table.string('user_name');
 })
 
-User.where('id', 1).fetch({withRelated: ['posts.tags']}).then(function(user) {
+// ...and another
+.createTable('accounts', function(table) {
+  table.increments('id');
+  table.string('account_name');
+  table.integer('user_id').unsigned().references('users.id');
+})
 
-  console.log(user.related('posts').toJSON());
+// Then query the table...
+.then(function() {
+  return knex.insert({user_name: 'Tim'}).into('users');
+})
 
-}).catch(function(err) {
+// ...and using the insert id, insert into the other table.
+.then(function(rows) {
+  return knex.table('accounts').insert({account_name: 'knex', user_id: rows[0]});
+})
 
-  console.error(err);
+// Query both of the rows.
+.then(function() {
+  return knex('users')
+    .join('accounts', 'users.id', 'accounts.user_id')
+    .select('users.user_name as user', 'accounts.account_name as account');
+})
 
+// .map over the results
+.map(function(row) {
+  console.log(row);
+})
+
+// Finally, add a .catch handler for the promise chain
+.catch(function(e) {
+  console.error(e);
 });

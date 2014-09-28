@@ -8,27 +8,62 @@ angular.module('starter.services', [])
   return $resource('/resource/questions/:questionId');
 })
 
-/**
- * A simple example service that returns some data.
- */
-.factory('Friends', function() {
-  // Might use a resource here that returns a JSON array
-
-  // Some fake testing data
-  var friends = [
-    { id: 0, name: 'Scruff McGruff' },
-    { id: 1, name: 'G.I. Joe' },
-    { id: 2, name: 'Miss Frizzle' },
-    { id: 3, name: 'Ash Ketchum' }
-  ];
-
-  return {
-    all: function() {
-      return friends;
-    },
-    get: function(friendId) {
-      // Simple index lookup
-      return friends[friendId];
+.factory('AuthenticationService', function() {
+    var auth = {
+        isAuthenticated: false,
+        isAdmin: false
     }
-  }
-});
+
+    return auth;
+})
+
+.factory('TokenInterceptor', function ($q, $window, $location, AuthenticationService) {
+    return {
+        request: function (config) {
+            config.headers = config.headers || {};
+            if ($window.sessionStorage.token) {
+                config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+            }
+            return config;
+        },
+
+        requestError: function(rejection) {
+            return $q.reject(rejection);
+        },
+
+        /* Set Authentication.isAuthenticated to true if 200 received */
+        response: function (response) {
+            if (response != null && response.status == 200 && $window.sessionStorage.token && !AuthenticationService.isAuthenticated) {
+                AuthenticationService.isAuthenticated = true;
+            }
+            return response || $q.when(response);
+        },
+
+        /* Revoke client authentication if 401 is received */
+        responseError: function(rejection) {
+            if (rejection != null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isAuthenticated)) {
+                delete $window.sessionStorage.token;
+                AuthenticationService.isAuthenticated = false;
+                $location.path("/admin/login");
+            }
+
+            return $q.reject(rejection);
+        }
+    };
+})
+
+.factory('RegistrationService', function ($http) {
+    return {
+        login: function(username, password) {
+            return $http.post('/login', {username: username, password: password});
+        },
+
+        logout: function() {
+            return $http.get('/logout');
+        },
+
+        register: function(username, password) {
+            return $http.post('/register', {username: username, password: password});
+        }
+    }
+})
