@@ -3,6 +3,7 @@ DEBUG = true;
 exports.db_client = 'pg';
 exports.db_url = process.env.DATABASE_URL || 'postgresql://localhost/muchado';
 exports.DEBUG = DEBUG;
+exports.knex_options = {client: exports.db_client, connection: exports.db_url, debug: DEBUG}
 
 exports.debug = function() {
 	if (DEBUG) {

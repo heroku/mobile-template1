@@ -7,18 +7,20 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','ngResource'])
 
-.run(function($ionicPlatform, $rootScope) {
+.run(function($window, $location, $ionicPlatform, $rootScope, AuthenticationService) {
   $rootScope.$on("$stateChangeStart", function(event, toState) {
       //redirect only if both isAuthenticated is false and no token is set
-      if (toState.name !== 'app.login' && toState.name !== 'app.signup' &&
-          toState.name !== 'app.logout'
+      
+      if (toState.name !== 'login' && toState.name !== 'signup' &&
+          toState.name !== 'logout' && toState.name !== 'register') {
 
-        nextRoute != null && 
-          !AuthenticationService.isAuthenticated && 
-          !$window.sessionStorage.token) {
+        if (!AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
 
-          $location.path("/login");
+          $location.path("/register");
+          event.preventDefault();
+        }
       }
+      
   });
 
   $ionicPlatform.ready(function() {
@@ -41,11 +43,17 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
   // Set up the various states which the app can be in.
   // Each state's controller can be found in controllers.js
   $stateProvider
-    .state('login', {
-      url: "/login",
-      templateUrl: "templates/login.html"
-    })
+    // .state('login', {
+    //   url: "/login",
+    //   templateUrl: "templates/login.html"
+    // })
 
+
+    .state('register', {
+      url: "/register",
+      templateUrl: "templates/register.html",
+      controller: 'RegisterCtrl'
+    })
 
     // setup an abstract state for the tabs directive
     .state('tab', {

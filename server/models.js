@@ -7,8 +7,14 @@ module.exports = function(bookshelf) {
 			tableName: 'questions'
 	});
 
+	var Answer = bookshelf.Model.extend({
+			tableName: 'answers'
+	});
+
+
 	return {
 		User: User,
-		Question: Question
+		Question: Question,
+		Answer: Answer
 	}
 }

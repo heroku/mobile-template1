@@ -8,6 +8,10 @@ angular.module('starter.services', [])
   return $resource('/resource/questions/:questionId');
 })
 
+.factory('Answer', function($resource) {
+  return $resource('/resource/answers/:answerId');
+})
+
 .factory('AuthenticationService', function() {
     var auth = {
         isAuthenticated: false,
@@ -52,7 +56,7 @@ angular.module('starter.services', [])
     };
 })
 
-.factory('RegistrationService', function ($http) {
+.factory('RegistrationService', function ($window, $http, AuthenticationService) {
     return {
         login: function(username, password) {
             return $http.post('/login', {username: username, password: password});
@@ -62,8 +66,12 @@ angular.module('starter.services', [])
             return $http.get('/logout');
         },
 
-        register: function(username, password) {
-            return $http.post('/register', {username: username, password: password});
+        register: function(user) {
+            return $http.post('/register', user).then(function(result) {
+                AuthenticationService.isAuthenticated = true;
+                $window.sessionStorage.token = result.data.token;
+                console.log(result.data);
+            });
         }
     }
 })
