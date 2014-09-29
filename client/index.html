@@ -25,7 +25,7 @@
     <script src="js/controllers.js"></script>
     <script src="js/services.js"></script>
   </head>
-  <body ng-app="starter" animation="slide-left-right-ios7">
+  <body ng-app="starter" animation="slide-left-right-ios7" ng-controller="AppCtrl">
     <!-- 
       The nav bar that will be updated as we navigate between views.
     -->
@@ -34,6 +34,11 @@
         Back
       </ion-nav-back-button>
     </ion-nav-bar>
+
+    <ion-nav-buttons side="right">
+        <button class="button button-clear" ng-click="logout()">Logout</button>
+    </ion-nav-buttons>
+
     <!-- 
       The views will be rendered in the <ion-nav-view> directive below
       Templates are in the /templates folder (but you could also

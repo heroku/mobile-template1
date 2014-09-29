@@ -13,6 +13,8 @@ var http           = require('http'),
     auth           = require('./auth')(models)
     ;
 
+/********************* APP SETUP *****************************/
+
 app = express();
 server  = http.createServer(app);
 io = require('socket.io')(server);
@@ -29,31 +31,54 @@ logger = {
 app.use(bodyParser());
 app.use(methodOverride());
 app.use(express.static(path.join(__dirname, '../client')));
+app.use(express.static(path.join(__dirname, '../admin')));
 app.use(express.static(path.join(__dirname, './pages')));
 
+// Logging
+app.use(function(req, res, next){
+  logger.debug('%s %s', req.method, req.url);
+  next();
+});
 
-notifier(bookshelf,
-  {
-    'questions': function(question_id) {
-      new models.Question({id:question_id})
-      .fetch()
-      .then(function(question) {
-        console.log("Question updated: ", question_id);
-        question.answer_index = null;
-        io.emit('questions', JSON.stringify(question));
-      });
-    }
-  }
-)
+app.use(function(err, req, res, next) {
+    logger.error(err.stack);
+    res.status(500).send(err.message);
+});
 
-function save_answer(answer, res, callback) {
+
+/********************* ROUTES *****************************/
+
+app.use('/register', auth.register);
+
+app.all('/resource/*', auth.authenticate);
+
+app.use('/resource', restful(models.Question, 'questions'));
+app.use('/resource', restful(models.Answer, 'answers', {pre_save: save_answer}));
+app.post('/resource/questions/:questionId/activate', models.activate_question);
+app.get('/resource/leaders', models.leaders);
+app.delete('/resource/leaders', models.clear_leaders);
+
+function save_answer(req, res, callback) {
+  var answer = req.body;
+
+  answer.user_id = req.user.id;
+
+  console.log("IN save_answer, answer is ", answer);
+
   new models.Question({id: answer.question_id}).fetch().then(function(q) {
     if (q.attributes.answer_index == answer.answer_index) {
-      new models.Answer({question_id: answer.question_id}).fetchAll().then(function(collection) {
+      models.Answer.query({select:'*'}).where({question_id: answer.question_id})
+        .fetchAll().then(function(collection) {
+        console.log("Found existing answers ", collection);
         if (collection.length > 0) {
+          console.log("Result collection is > 0");
           // soneone already answered this question
+          res.send('OK');
         } else {
+          console.log("Result collection is 0");
           callback(answer); 
+          // Tell everyone the question is answered
+          io.emit('answer', JSON.stringify({user: req.user, question_id: answer.question_id}));
         }
       });
     } else {
@@ -63,9 +88,29 @@ function save_answer(answer, res, callback) {
   });
 }
 
-app.use('/register', auth.register);
-app.use('/resource', restful(models.Question, 'questions'));
-app.use('/resource', restful(models.Answer, 'answers', {pre_save: save_answer}));
+/********************* NOTIFICATIONS *****************************/
+
+
+notifier(bookshelf,
+  {
+    'questions': function(question_id) {
+      new models.Question({id:question_id})
+      .fetch()
+      .then(function(question) {
+        question = question.attributes;
+        question.answer_index = null;
+        console.log("Loaded question ", question);
+        if (question.show) {
+          console.log("Sending next question: ", question);
+          io.emit('questions', JSON.stringify(question));
+        }
+      });
+    }
+  }
+)
+
+/********************* SERVER STARTT *****************************/
+
 
 app.set('port', process.env.PORT || 5000);
 

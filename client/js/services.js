@@ -5,11 +5,16 @@ angular.module('starter.services', [])
 })
 
 .factory('Question', function($resource) {
-  return $resource('/resource/questions/:questionId');
+  return $resource('/resource/questions/:questionId', null, {
+    'activate': {method:'POST', url: '/resource/questions/:questionId/activate'}
+  });
 })
 
 .factory('Answer', function($resource) {
-  return $resource('/resource/answers/:answerId');
+  return $resource('/resource/answers/:answerId', null, {
+    'leaders': {method:'GET', url:'/resource/leaders', isArray:true},
+    'truncate': {method:'DELETE', url:'/resource/leaders'}
+  });
 })
 
 .factory('AuthenticationService', function() {
@@ -25,8 +30,8 @@ angular.module('starter.services', [])
     return {
         request: function (config) {
             config.headers = config.headers || {};
-            if ($window.sessionStorage.token) {
-                config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+            if ($window.localStorage.token) {
+                config.headers.Authorization = 'Bearer ' + $window.localStorage.token;
             }
             return config;
         },
@@ -37,7 +42,7 @@ angular.module('starter.services', [])
 
         /* Set Authentication.isAuthenticated to true if 200 received */
         response: function (response) {
-            if (response != null && response.status == 200 && $window.sessionStorage.token && !AuthenticationService.isAuthenticated) {
+            if (response != null && response.status == 200 && $window.localStorage.token && !AuthenticationService.isAuthenticated) {
                 AuthenticationService.isAuthenticated = true;
             }
             return response || $q.when(response);
@@ -45,8 +50,8 @@ angular.module('starter.services', [])
 
         /* Revoke client authentication if 401 is received */
         responseError: function(rejection) {
-            if (rejection != null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isAuthenticated)) {
-                delete $window.sessionStorage.token;
+            if (rejection != null && rejection.status === 401 && ($window.localStorage.token || AuthenticationService.isAuthenticated)) {
+                delete $window.localStorage.token;
                 AuthenticationService.isAuthenticated = false;
                 $location.path("/admin/login");
             }
@@ -63,13 +68,13 @@ angular.module('starter.services', [])
         },
 
         logout: function() {
-            return $http.get('/logout');
+            delete $window.localStorage.token;
         },
 
         register: function(user) {
             return $http.post('/register', user).then(function(result) {
                 AuthenticationService.isAuthenticated = true;
-                $window.sessionStorage.token = result.data.token;
+                $window.localStorage.token = result.data.token;
                 console.log(result.data);
             });
         }

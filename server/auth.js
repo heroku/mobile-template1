@@ -39,19 +39,37 @@ module.exports = function(models) {
     });
   }
 
-  function authenicate(req, res, next) {
-    var token = req.headers
-    new models.User({token:token).fetch().then(function(model) {
-        if (model) {
-          user_cache[]
-          return res.json(model.attributes);
-        } else {
-          return res.status(401, "Invalid token");
-        }
-    });
+  function authenticate(req, res, next) {
+    var token = req.headers['authorization'];
+    if (token) {
+      token = token.split(' ')[1];
+    } else {
+      token = req.query.token;
+      delete req.query.token;
+    }
+    console.log("Authenticating token ", token);
+
+    if (token in user_cache) {
+      req.user = user_cache[token];
+      console.log("Found cached user ", req.user);
+      next();
+    } else {
+      new models.User({token:token}).fetch().then(function(model) {
+          if (model) {
+            user_cache[token] = model.attributes;
+            req.user = model.attributes;
+            console.log("Found user ", req.user);
+            return next();
+          } else {
+            console.log("Invalid token, returning 401");
+            return res.status(401).send("Invalid token");
+          }
+      });
+    }
   }
 
   return {
-    register: register
+    register: register,
+    authenticate: authenticate
   }
 }

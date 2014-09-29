@@ -1,6 +1,8 @@
 var express = require('express');
 
 module.exports = function(model, resource, options) {
+	options = options || {};
+
 	var router = express.Router();
 	router.get('/' + resource, function(req, res, next) {
 		console.log("Params ", req.query);
@@ -16,22 +18,24 @@ module.exports = function(model, resource, options) {
 
 	router.get('/' + resource + "/:pkid", function(req, res, next) {
 		var pkid = req.params.pkid;
-		new model({id:pkid}).fetchOne().then(function(result) {
+		new model({id:pkid}).fetch().then(function(result) {
 			res.json(result);
 		});
 	});
 
 	function save_item(item, res) {
+		console.log("[save] ", item);
 		new model(item).save().then(function(row) {
 			res.json(row);
 		}).catch(function(err) {
-			res.send(500, err);
+			console.log(err);
+			res.status(500).send(err);
 		});
 	}
 
 	router.post('/' + resource, function(req, res, next) {
 		if (options.pre_save) {
-			options.pre_save(req.body, res, function(item) {
+			options.pre_save(req, res, function(item) {
 				save_item(item, res);
 			});
 		} else {

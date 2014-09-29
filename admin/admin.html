@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html ng-app="admin">
+  <head>
+    <meta charset="utf-8">
+    <title>QuizLive Admin</title>
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="lib/ionic/js/angular/angular-resource.js"></script>
+    
+    <!-- your app's js -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/admin_app.js"></script>
+    <script src="js/services.js"></script>
+    <style>
+      input {
+        width:400px;
+        display:block;
+      }
+      textarea {
+        width:400px;
+        height:60px;
+        display:block;
+      }
+      label {
+        display:block;
+      }
+    </style>
+  </head>
+  <body ng-controller="AdminCtrl">
+    <div style="float:left;width:500px">
+      <h1>Quiz Live Admin</h1>
+      {{name}}
+
+      <h2>Questions</h2>
+      <form>
+        <div style="width:400px;float:left">
+          <label>Question</label>
+          <textarea ng-model="question.question" ></textarea>
+          <label>Answers</label>
+          <textarea ng-model="question.answers"></textarea>
+        </div>
+        <div style="margin-left:20px;width:400px;float:left">
+          <label>Correct answer</label>
+          <input type="text" placeholder="index of answer" ng-model="question.answer_index" />
+          <button ng-click="saveQuestion()">Save</button>
+        </div>
+        <div style="clear:both;margin-bottom:40px"></div>
+      </form>
+
+      <table border="1">
+        <tr ng-repeat="question in questions">
+          <td>{{question.id}}</td>
+          <td>{{question.question}}</td>
+          <td>{{question.answers}}</td>
+          <td>{{question.answer_index}}</td>
+          <td>activate <input type="checkbox" ng-data-id="{{question.id}}" class="cb" style="display:inline;width:20px" ng-click="activate(question.id)"/></td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="float:left;width:420px">
+      <h1>Leaderboard</h1>
+      <button ng-click="clearLeaders()">Clear Leaderboard</button>
+      <br />
+      <table border="1">
+        <tr ng-repeat="user in leaders">
+          <td>{{user.count}}</td>
+          <td>{{user.name}}</td>
+        </tr>
+      </table>
+    </div>    
+
+  </body>
+</html>

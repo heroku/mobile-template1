@@ -14,7 +14,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
       if (toState.name !== 'login' && toState.name !== 'signup' &&
           toState.name !== 'logout' && toState.name !== 'register') {
 
-        if (!AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
+        if (!AuthenticationService.isAuthenticated && !$window.localStorage.token) {
 
           $location.path("/register");
           event.preventDefault();
@@ -74,12 +74,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
       }
     })
 
-    .state('tab.friends', {
-      url: '/friends',
+    .state('tab.leaders', {
+      url: '/leaders',
       views: {
-        'tab-friends': {
-          templateUrl: 'templates/tab-friends.html',
-          controller: 'FriendsCtrl'
+        'tab-leaders': {
+          templateUrl: 'templates/tab-leaders.html',
+          controller: 'LeadersCtrl'
         }
       }
     });
@@ -90,5 +90,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
   // Register middleware to ensure our auth token is passed to the server
   $httpProvider.interceptors.push('TokenInterceptor');
 
-});
+})
+
+.controller('AppCtrl', function($scope, $location, RegistrationService) {
+  $scope.logout = function() {
+    RegistrationService.logout();
+    $location.path("/register");
+  }
+})
 

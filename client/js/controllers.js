@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('QuizCtrl', function($scope, SocketIO, Question, Answer) {
+.controller('QuizCtrl', function($scope, $ionicPopup, SocketIO, Question, Answer, RegistrationService) {
 	$scope.q = {question:"...waiting for next question..."};
 	$scope.q.answers = ['one','two','three'];
 	$scope.answer = null;
@@ -12,8 +12,17 @@ angular.module('starter.controllers', [])
 
 	SocketIO.on('questions', function(msg){
 		$scope.q = JSON.parse(msg);
-		console.log($scope.questions);
+		console.log($scope.q);
 		$scope.$apply();
+	});
+
+	SocketIO.on('answer', function(msg) {
+		console.log("Answer ws ", msg);
+		var packet = JSON.parse(msg);
+		var popup = $ionicPopup.alert({title: 'Answer', content: packet.user.name + " answered first!"});
+		setTimeout(function() {
+			popup.close();
+		}, 3000);
 	});
 
 	$scope.saveChoice = function(index) {
@@ -39,4 +48,13 @@ angular.module('starter.controllers', [])
 			$location.path("/");
 		})
 	}
+})
+
+.controller('LeadersCtrl', function($scope, SocketIO, Answer) {
+	$scope.leaders = Answer.leaders();
+
+	SocketIO.on('answer', function(msg) {
+		$scope.leaders = Answer.leaders();
+	});
+
 })
