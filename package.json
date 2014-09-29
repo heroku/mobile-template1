@@ -1,5 +1,5 @@
 {
-  "name": "mobileclips",
+  "name": "quizlive",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -8,7 +8,7 @@
     "bookshelf": "^0.7.7",
     "express": "^4.9.5",
     "knex": "^0.6.22",
-    "method-override": "^1.1.0",
+    "method-override": "^2.2.0",
     "node-uuid": "^1.4.1",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",

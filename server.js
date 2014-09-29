@@ -1,5 +1,5 @@
 var http           = require('http'),
-    config         = require('./config'),
+    config         = require('./server/config'),
     express        = require('express'),
     bodyParser     = require('body-parser'),
     methodOverride = require('method-override'),
@@ -7,10 +7,10 @@ var http           = require('http'),
     path           = require('path'),
     knex           = require('knex')(config.knex_options),
     bookshelf      = require('bookshelf')(knex),
-    models         = require('./models')(bookshelf),
-    notifier       = require('./notifier'),
-    restful        = require('./bookshelf_rest'),
-    auth           = require('./auth')(models)
+    models         = require('./server/models')(bookshelf),
+    notifier       = require('./server/notifier'),
+    restful        = require('./server/bookshelf_rest'),
+    auth           = require('./server/auth')(models)
     ;
 
 /********************* APP SETUP *****************************/
@@ -30,9 +30,9 @@ logger = {
 
 app.use(bodyParser());
 app.use(methodOverride());
-app.use(express.static(path.join(__dirname, '../client')));
-app.use(express.static(path.join(__dirname, '../admin')));
-app.use(express.static(path.join(__dirname, './pages')));
+app.use(express.static(path.join(__dirname, 'client/')));
+app.use(express.static(path.join(__dirname, 'admin/')));
+app.use(express.static(path.join(__dirname, 'server/pages')));
 
 // Logging
 app.use(function(req, res, next){
