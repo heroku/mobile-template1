@@ -1,6 +1,11 @@
 module.exports = function(bookshelf) {
 	var User = bookshelf.Model.extend({
-			tableName: 'users'
+			tableName: 'users',
+
+			incrPoints: function(val) {
+			    this.set('points', this.get('points') + val);
+				return this.save();
+			}
 	});
 
 	var Question = bookshelf.Model.extend({
@@ -24,15 +29,17 @@ module.exports = function(bookshelf) {
 	}
 
 	function leaders(req, res, next) {
-		return bookshelf.knex('answers').innerJoin('users','answers.user_id','users.id').groupBy('user_id')
-				.select(['user_id',knex.raw('count(*)'),knex.raw('min(users.name) as name')]).then(function(rows) {
+		return bookshelf.knex('users').orderBy('points', 'desc')
+				.select('*').then(function(rows) {
 			res.json(rows);
 		});
 	}
 
 	function clear_leaders(req, res, next) {
 		bookshelf.knex('answers').del().then(function() {
-			res.send('OK');
+			bookshelf.knex('users').update({points:0}).then(function() {
+				res.send('OK');
+			})
 		});
 	}
 

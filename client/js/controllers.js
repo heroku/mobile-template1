@@ -4,7 +4,25 @@ angular.module('starter.controllers', [])
 	$scope.q = {question:"...waiting for next question..."};
 	$scope.q.answers = ['one','two','three'];
 	$scope.answer = null;
-	$scope.is_answered = false;
+	$scope.show_leaders = false;
+	$scope.secondsLeft = 10;
+
+	function startTimer() {
+		$scope.secondsLeft = 10;
+		/*
+		var interval = setInterval(function() {
+			$scope.secondsLeft--;
+			console.log($scope.secondsLeft);
+			$scope.$parent.timeleft = $scope.secondsLeft; 
+			$scope.$parent.$apply();
+			if ($scope.secondsLeft == 0) {
+				clearInterval(interval);
+			}
+		}, 1000);
+		*/
+	}
+
+	startTimer();
 
 	Question.query({show:true, select:['question','answers']}, function(rows) {
 		console.log("Questions returned ", rows);
@@ -12,10 +30,12 @@ angular.module('starter.controllers', [])
 	});
 
 	SocketIO.on('questions', function(msg){
+		hideLeaders();
 		$scope.q = JSON.parse(msg);
 		$scope.answer = null;
 		console.log($scope.q);
 		$scope.$apply();
+		startTimer();
 	});
 
 	SocketIO.on('answer', function(msg) {
@@ -40,10 +60,21 @@ angular.module('starter.controllers', [])
 		a.$save(function() {
 			// Right answer
 			$scope.answer_color = 'button-balanced';
+			showLeaders();
 		}, function() {
 			// Wrong answer
 			$scope.answer_color = 'button-assertive';
+			showLeaders();
 		});
+	}
+
+	function showLeaders() {
+		$scope.show_leaders = true;
+		$scope.leaders = Answer.leaders();
+	}
+
+	function hideLeaders() {
+		$scope.show_leaders = false;
 	}
 })
 

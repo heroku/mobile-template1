@@ -69,14 +69,13 @@ function save_answer(req, res, callback) {
     if (q.attributes.answer_index == answer.answer_index) {
       models.Answer.query({select:'*'}).where({question_id: answer.question_id})
         .fetchAll().then(function(collection) {
-        console.log("Found existing answers ", collection);
         if (collection.length > 0) {
-          console.log("Result collection is > 0");
           // soneone already answered this question
+          req.user.incrPoints(2);
           res.send('OK');
         } else {
-          console.log("Result collection is 0");
           callback(answer); 
+          req.user.incrPoints(5);
           // Tell everyone the question is answered
           io.emit('answer', JSON.stringify({user: req.user, question_id: answer.question_id}));
         }

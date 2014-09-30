@@ -56,8 +56,8 @@ module.exports = function(models) {
     } else {
       new models.User({token:token}).fetch().then(function(model) {
           if (model) {
-            user_cache[token] = model.attributes;
-            req.user = model.attributes;
+            user_cache[token] = model;
+            req.user = model;
             console.log("Found user ", req.user);
             return next();
           } else {

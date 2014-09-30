@@ -16,5 +16,13 @@
     </form>
 
     <button style="color:black;font-weight:bold" class="button button-block button-positive" ng-class="answer_color" ng-show="answer">{{answer}}</button>
+
+    <div class="list card" ng-show="show_leaders" style="box-shadow:3px 3px #333333;background-color:#FFFF00;padding:10px">
+      <h3 style="font-size:1em">Leaderboard</h3>
+      <ul style="line-height:0.25em">
+        <li class="item" ng-repeat="user in leaders">{{user.points}}pts - {{user.name}}</li>
+      </ul>
+    </div>
+
   </ion-content>
 </ion-view>

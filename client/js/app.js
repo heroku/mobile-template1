@@ -97,5 +97,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
     RegistrationService.logout();
     $location.path("/register");
   }
+  $scope.timeleft = '0 secs';
 })
 
