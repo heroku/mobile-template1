@@ -1,27 +1,88 @@
-# Heroku template mobile app `Muchado`
+# Heroku template mobile app `Quiz Live`
 
-This sample application implements a basic To Do list mobile application. The mobile
+This sample application implements a simple live Quiz game mobile application. The mobile
 app itself is a hybrid Angular JS app composed from HTML, CSS and Javascript. The
 server side is composed of a Node.js application running on top of a Postgres database.
 
 This application should serve as a good base for creating mobile apps to deploy on
 Heroku.
 
-## The app
+## How to play
 
-Our sample app is pretty simple. It supports a simple email / password registration
-and login system. Then users can create, mark off, and delete To Do items in the
-app. 
+A set of players opens the app on their phones and registers to play. The app maintains 
+this list of users plus a set of quiz questions. During the game, questions
+are presented to each user running the app, and points are awarded for correct answers
+to questions. As players earn points a realtime leaderboard is displayed to each
+player.
 
-A user can invite another user to view shared to do items. When they create a To Do
-item they can elect to create a 'Shared' to do, in which case the item will appear
-on the 'Shared To Dos' list of both users.
+Notification of new questions and answer results are broadcast via Websocket to the
+mobile app using the SocketIO library.
 
 ## Architecture
 
 The app has two major pieces: An AngularJS based client app which comprises the front-end
-which runs on the phone, and a Node.js backend which provides an API to
-the client app for user authentication and data storage.
+which runs on the phone, and a Node.js backend which provides an API to the client app for 
+user registration, data storage, and event broadcast.
 
-## Authentication
+    /---mobile app-----\
+    | Ionic framework  |
+    | Angular JS       |
+    \------------------/
+           |
+           | http
+           | WS
+           |
+    /-------Node.js app-\
+    |                   |
+    | express           |
+    |   bookshelf       |
+    |      node-pg      |
+    \-------------------/
+           |
+       [Postgres DB]
+
+## Deployment
+
+The app can be deployed to Heroku, and distributed to the mobile device either through
+the mobile web browser, or by compiling the AngularJS application into a native app
+using an Apach Cordova container.
+
+## Installation and setup
+
+Clone this repo to your local machine. Create a database on your local server called
+`quizlive`. Now create the database schema and initial data:
+
+    ./migrate.sh
+
+And now run the server app:
+
+    node server.js
+
+and open the client app:
+
+    http://localhost:5000
+
+## Deploy to Heroku
+
+When you are ready to share the app, just create a new Heroku app, provision a Postgres
+database addon for your app, and then deploy the code.
+
+# Understanding the code
+
+The components of the application are organized as follows:
+
+| component | folder |
+-----------------------
+| client app | client |
+|   app code | client/js |
+|   html templates | client/templates |
+|   ionic/angular frameworks | client/lib | 
+|            |        |
+| server app | server |
+|   db migrations | server/migrations |    
+| admin app  | admin  |
+-------------------------
+
+
+
 
