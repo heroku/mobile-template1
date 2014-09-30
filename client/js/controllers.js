@@ -4,6 +4,7 @@ angular.module('starter.controllers', [])
 	$scope.q = {question:"...waiting for next question..."};
 	$scope.q.answers = ['one','two','three'];
 	$scope.answer = null;
+	$scope.is_answered = false;
 
 	Question.query({show:true, select:['question','answers']}, function(rows) {
 		console.log("Questions returned ", rows);
@@ -12,6 +13,7 @@ angular.module('starter.controllers', [])
 
 	SocketIO.on('questions', function(msg){
 		$scope.q = JSON.parse(msg);
+		$scope.answer = null;
 		console.log($scope.q);
 		$scope.$apply();
 	});
@@ -24,6 +26,11 @@ angular.module('starter.controllers', [])
 			popup.close();
 		}, 3000);
 	});
+
+	$scope.$on('$destroy', function (event) {
+        SocketIO.removeAllListeners('questions');
+        SocketIO.removeAllListeners('answer');
+    });
 
 	$scope.saveChoice = function(index) {
 		$scope.answer_color = 'button-stable';
@@ -41,7 +48,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('RegisterCtrl', function($scope, $location, RegistrationService) {
-	$scope.user = {name:'scooter', email:'foobar'};
+	$scope.user = {name:'', email:''};
 
 	$scope.register = function() {
 		RegistrationService.register($scope.user).then(function() {
@@ -56,5 +63,9 @@ angular.module('starter.controllers', [])
 	SocketIO.on('answer', function(msg) {
 		$scope.leaders = Answer.leaders();
 	});
+
+	$scope.$on('$destroy', function (event) {
+        SocketIO.removeAllListeners('answer');
+    });
 
 })
