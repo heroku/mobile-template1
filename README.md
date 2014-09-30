@@ -1,8 +1,8 @@
 # Heroku template mobile app `Quiz Live`
 
-This sample application implements a simple live Quiz game mobile application. The mobile
-app itself is a hybrid Angular JS app composed from HTML, CSS and Javascript. The
-server side is composed of a Node.js application running on top of a Postgres database.
+This sample application implements a simple "live quiz" mobile game. The mobile
+app itself is a hybrid AngularJS app composed of HTML, CSS and Javascript. The
+server side is implemented as a Node.js application running on top of a Postgres database.
 
 This application should serve as a good base for creating mobile apps to deploy on
 Heroku.
@@ -29,8 +29,7 @@ user registration, data storage, and event broadcast.
     | Angular JS       |
     \------------------/
            |
-           | http
-           | WS
+           | http / websocket
            |
     /-------Node.js app-\
     |                   |
@@ -72,7 +71,7 @@ database addon for your app, and then deploy the code.
 The components of the application are organized as follows:
 
 | component | folder |
------------------------
+|------------|---------|
 | client app | client |
 |   app code | client/js |
 |   html templates | client/templates |
@@ -81,7 +80,6 @@ The components of the application are organized as follows:
 | server app | server |
 |   db migrations | server/migrations |    
 | admin app  | admin  |
--------------------------
 
 
 
