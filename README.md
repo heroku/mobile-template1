@@ -48,7 +48,11 @@ using an Apach Cordova container.
 
 ## Installation and setup
 
-Clone this repo to your local machine. Create a database on your local server called
+Clone this repo to your local machine and install the requirements:
+
+    npm install
+
+Now create a database on your local server called
 `quizlive`. Now create the database schema and initial data:
 
     ./migrate.sh
@@ -73,12 +77,12 @@ The components of the application are organized as follows:
 | component | folder |
 |------------|---------|
 | client app | client |
-|   app code | client/js |
-|   html templates | client/templates |
-|   ionic/angular frameworks | client/lib | 
+| ..app code | client/js |
+| ..html templates | client/templates |
+| ..ionic/angular frameworks | client/lib | 
 |            |        |
-| server app | server |
-|   db migrations | server/migrations |    
+| express app | server |
+| ..db migrations | server/migrations |    
 | admin app  | admin  |
 
 
