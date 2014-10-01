@@ -1,9 +1,9 @@
 <ion-view title="Live Quiz">
   <ion-content class="padding">
 
-	<div class="card">
+	<div class="card" ng-show="q.question != 'start' && q.question != 'end'">
 	  <div class="item item-text-wrap">
-	    {{q.question}}
+	    <h3>{{q.question}}</h3>
 	  </div>
 	</div>
 
@@ -15,7 +15,14 @@
         </button>
     </form>
 
-    <button style="color:black;font-weight:bold" class="button button-block button-positive" ng-class="answer_color" ng-show="answer">{{answer}}</button>
+    <button style="color:black;font-weight:bold" class="button button-block button-positive" ng-class="answer_color" ng-show="answer">
+      <i class="icon" ng-class="answer_icon"></i>
+      {{answer}}
+    </button>
+
+    <div class="list bar bar-header bar-energized" ng-show="show_leaders && correct_answer" style="box-shadow:3px 3px #333333;padding:10px">
+      <h1 class="title">{{correct_answer.name}} was the first to answer</h1>
+    </div>
 
     <div class="list card" ng-show="show_leaders" style="box-shadow:3px 3px #333333;background-color:#FFFF00;padding:10px">
       <h3 style="font-size:1em">Leaderboard</h3>
@@ -24,5 +31,14 @@
       </ul>
     </div>
 
+    <div class="card" ng-show="q.question == 'end'" style="background:#00AADD;box-shadow:3px 3px #333333;border-radius:6px;padding:10px;color:white">
+      <h1 style="color:white">Thanks for playing!</h1>
+    </div>
+
+    <div class="card" ng-show="q.question == 'start'" style="background:#00AADD;box-shadow:3px 3px #333333;border-radius:6px;padding:10px;color:white">
+      <h1 style="color:white">The Quiz is about to start!</h1>
+      <h4 style="color:white">First correct earns 5 points!</h4>
+      <h4 style="color:white">Any correct earns 2 points!</h4>
+    </div>
   </ion-content>
 </ion-view>

@@ -28,6 +28,13 @@ module.exports = function(bookshelf) {
 		});
 	}
 
+	function next_question(req, res, next) {
+		return bookshelf.knex('questions').update({'show': knex.raw('(id = (select id from questions where show = true) + 1)')})
+			.then(function() {
+				res.send('OK');
+			});
+	}
+
 	function leaders(req, res, next) {
 		return bookshelf.knex('users').orderBy('points', 'desc')
 				.select('*').then(function(rows) {
@@ -36,10 +43,17 @@ module.exports = function(bookshelf) {
 	}
 
 	function clear_leaders(req, res, next) {
-		bookshelf.knex('answers').del().then(function() {
-			bookshelf.knex('users').update({points:0}).then(function() {
-				res.send('OK');
-			})
+		var knex = bookshelf.knex;
+		knex('answers').del().then(function() {
+			knex('users').update({points:0}).then(function() {
+				knex('questions').update({show:false}).then(function() {
+					knex('questions').where({question:'start'}).update({show:true}).then(function() {
+						res.send('OK');
+					});
+				});
+			});
+		}).catch(function(err) {
+			next(err);
 		});
 	}
 
@@ -48,6 +62,7 @@ module.exports = function(bookshelf) {
 		Question: Question,
 		Answer: Answer,
 		activate_question: activate_question,
+		next_question: next_question,
 		leaders: leaders,
 		clear_leaders: clear_leaders
 	}

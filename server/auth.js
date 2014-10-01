@@ -68,8 +68,15 @@ module.exports = function(models) {
     }
   }
 
+  function clear_leaders(req, res, next) {
+      user_cache = {};
+      return models.clear_leaders(req, res, next);
+  }
+
+
   return {
     register: register,
-    authenticate: authenticate
+    authenticate: authenticate,
+    clear_leaders: clear_leaders
   }
 }

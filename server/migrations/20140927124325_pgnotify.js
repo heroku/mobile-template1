@@ -17,7 +17,7 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
   return Promise.all([
-  	//knex.raw("DROP TRIGGER questions_show_trigger on questions"),
-  	//knex.raw("DROP FUNCTION questions_notify_trigger()")
+  	knex.raw("DROP TRIGGER questions_show_trigger on questions"),
+  	knex.raw("DROP FUNCTION questions_notify_trigger()")
   ]);
 };

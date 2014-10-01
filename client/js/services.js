@@ -6,7 +6,8 @@ angular.module('starter.services', [])
 
 .factory('Question', function($resource) {
   return $resource('/resource/questions/:questionId', null, {
-    'activate': {method:'POST', url: '/resource/questions/:questionId/activate'}
+    'activate': {method:'POST', url: '/resource/questions/:questionId/activate'},
+    'next': {method:'POST', url: '/resource/questions/:questionId/next'}
   });
 })
 

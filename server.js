@@ -55,24 +55,28 @@ app.all('/resource/*', auth.authenticate);
 app.use('/resource', restful(models.Question, 'questions'));
 app.use('/resource', restful(models.Answer, 'answers', {pre_save: save_answer}));
 app.post('/resource/questions/:questionId/activate', models.activate_question);
+app.post('/resource/questions/:questionId/next', models.next_question);
 app.get('/resource/leaders', models.leaders);
-app.delete('/resource/leaders', models.clear_leaders);
+app.delete('/resource/leaders', auth.clear_leaders);
 
 function save_answer(req, res, callback) {
   var answer = req.body;
 
-  answer.user_id = req.user.id;
 
-  console.log("IN save_answer, answer is ", answer);
+  answer.user_id = req.user.id;
 
   new models.Question({id: answer.question_id}).fetch().then(function(q) {
     if (q.attributes.answer_index == answer.answer_index) {
+
+      io.emit('_every_answer', JSON.stringify({user: req.user, correct: true}));
+
       models.Answer.query({select:'*'}).where({question_id: answer.question_id})
         .fetchAll().then(function(collection) {
         if (collection.length > 0) {
           // soneone already answered this question
           req.user.incrPoints(2);
           res.send('OK');
+
         } else {
           callback(answer); 
           req.user.incrPoints(5);
@@ -81,6 +85,7 @@ function save_answer(req, res, callback) {
         }
       });
     } else {
+      io.emit('_every_answer', JSON.stringify({user: req.user, correct: false}));
       res.send(500, 'Incorrect');
       console.log("ERROR!! ", answer);
     }

@@ -1,50 +1,62 @@
 angular.module('starter.controllers', [])
 
-.controller('QuizCtrl', function($scope, $ionicPopup, SocketIO, Question, Answer, RegistrationService) {
+.controller('QuizCtrl', function($scope, $ionicPopup, $ionicLoading, SocketIO, Question, Answer, RegistrationService) {
 	$scope.q = {question:"...waiting for next question..."};
 	$scope.q.answers = ['one','two','three'];
 	$scope.answer = null;
 	$scope.show_leaders = false;
 	$scope.secondsLeft = 10;
-
-	function startTimer() {
-		$scope.secondsLeft = 10;
-		/*
-		var interval = setInterval(function() {
-			$scope.secondsLeft--;
-			console.log($scope.secondsLeft);
-			$scope.$parent.timeleft = $scope.secondsLeft; 
-			$scope.$parent.$apply();
-			if ($scope.secondsLeft == 0) {
-				clearInterval(interval);
-			}
-		}, 1000);
-		*/
-	}
-
-	startTimer();
+	$scope.correct_answer = null;
 
 	Question.query({show:true, select:['question','answers']}, function(rows) {
 		console.log("Questions returned ", rows);
 		$scope.q = rows[0];
+		check_start();
 	});
 
+	function check_start() {
+		if ($scope.q.question == 'start') {
+			$scope.q.answers = [];
+		} else if ($scope.q.question == 'end') {
+			showLeaders();
+		}
+	}
+
 	SocketIO.on('questions', function(msg){
-		hideLeaders();
-		$scope.q = JSON.parse(msg);
-		$scope.answer = null;
-		console.log($scope.q);
-		$scope.$apply();
-		startTimer();
+		$scope.correct_answer = null;
+		msg = JSON.parse(msg);
+
+		if (msg.question != 'end') {
+			$scope.timer = 3;
+			$ionicLoading.show({template: 'Next question in 3 seconds...'});
+		} else {
+			showLeaders();
+			$scope.timer = 1;
+		}
+
+		var timer = setInterval(function() {
+			$scope.timer--;
+	   		$ionicLoading.show({template: 'Next question in ' + $scope.timer + ' seconds...'});
+
+			if ($scope.timer <= 0) {
+				if (msg.question != 'end') {
+					hideLeaders();
+				}
+				$ionicLoading.hide();
+				clearInterval(timer);
+				$scope.q = msg;
+				$scope.answer = null;
+				check_start();
+				console.log($scope.q);
+ 				$scope.$apply();
+			} 
+		}, 1000);
 	});
 
 	SocketIO.on('answer', function(msg) {
 		console.log("Answer ws ", msg);
 		var packet = JSON.parse(msg);
-		var popup = $ionicPopup.alert({title: 'Answer', content: packet.user.name + " answered first!"});
-		setTimeout(function() {
-			popup.close();
-		}, 3000);
+		$scope.correct_answer = packet.user;
 	});
 
 	$scope.$on('$destroy', function (event) {
@@ -60,10 +72,12 @@ angular.module('starter.controllers', [])
 		a.$save(function() {
 			// Right answer
 			$scope.answer_color = 'button-balanced';
+			$scope.answer_icon = 'ion-checkmark';
 			showLeaders();
 		}, function() {
 			// Wrong answer
 			$scope.answer_color = 'button-assertive';
+			$scope.answer_icon = 'ion-close-round';
 			showLeaders();
 		});
 	}

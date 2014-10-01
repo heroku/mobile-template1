@@ -16,8 +16,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
 
         if (!AuthenticationService.isAuthenticated && !$window.localStorage.token) {
 
-          $location.path("/register");
           event.preventDefault();
+          $location.path("/register");
         }
       }
       

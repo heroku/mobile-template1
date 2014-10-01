@@ -36,6 +36,14 @@
       <h1>Quiz Live Admin</h1>
       {{name}}
 
+      <button ng-click="next_question()" style="padding:20px;font-size:2em">Next Question!</button>
+
+      <h3>Current question: {{current_question.question}}</h3>
+      <h3>Answers</h3>
+      <ul>
+        <li ng-repeat="answer in answers">{{answer.user.name}} {{answer.correct ? ': right' : ':wrong'}}</li>
+      </ul>
+
       <h2>Questions</h2>
       <form>
         <div style="width:400px;float:left">
