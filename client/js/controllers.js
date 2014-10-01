@@ -56,7 +56,7 @@ angular.module('starter.controllers', [])
 	SocketIO.on('answer', function(msg) {
 		console.log("Answer ws ", msg);
 		var packet = JSON.parse(msg);
-		$scope.correct_answer = packet.user;
+		$scope.correct_answer = packet;
 	});
 
 	$scope.$on('$destroy', function (event) {

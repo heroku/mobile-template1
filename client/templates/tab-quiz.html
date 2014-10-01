@@ -21,7 +21,7 @@
     </button>
 
     <div class="list bar bar-header bar-energized" ng-show="show_leaders && correct_answer" style="box-shadow:3px 3px #333333;padding:10px">
-      <h1 class="title">{{correct_answer.name}} was the first to answer</h1>
+      <h1 class="title"><b style="font-size:1.5em">!! {{correct_answer.answer}} !!</b> <b>{{correct_answer.user.name}}</b> answered correctly first</h1>
     </div>
 
     <div class="list card" ng-show="show_leaders" style="box-shadow:3px 3px #333333;background-color:#FFFF00;padding:10px">

@@ -81,7 +81,12 @@ function save_answer(req, res, callback) {
           callback(answer); 
           req.user.incrPoints(5);
           // Tell everyone the question is answered
-          io.emit('answer', JSON.stringify({user: req.user, question_id: answer.question_id}));
+          var theAnswer = '';
+          try {
+            theAnswer = q.attributes.answers[q.attributes.answer_index-1];
+          } catch (e) {}
+          io.emit('answer', JSON.stringify({user: req.user, question_id: answer.question_id,
+                                            answer: theAnswer}));
         }
       });
     } else {

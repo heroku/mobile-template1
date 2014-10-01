@@ -61,6 +61,11 @@ exports.up = function(knex, Promise) {
 		 	answer_index: 1
 		 },
 		 {
+		 	question:"The Millenium Falcon made the Kessel run in how long?",
+		 	answers: ['8 nanoclicks','3.7 light-seconds','12 parsecs'],
+		 	answer_index: 3
+		 },
+		 {
 		 	question:'The city of Mayfield was annexed by Palo Alto in what year?',
 		 	answers: ['1925','1940','1958','1967'],
 		 	answer_index: 1
@@ -74,6 +79,36 @@ exports.up = function(knex, Promise) {
 		 	question:"What was the subject of Cindy Lauper\s song 'She Bop'?",
 		 	answers: ['teen pregnancy','masturbation','school dances'],
 		 	answer_index: 2
+		 },
+		 {
+		 	question:"Who turned down the lead for the movie 'American Beauty'?",
+		 	answers: ['Alan Alda','Chevy Chase','Robert Downey Jr.'],
+		 	answer_index:2
+		 },
+		 {
+		 	question:"Who was really 'Deep Throat'?",
+		 	answers: ['John Dean','Alexander Haig','Mark Felt'],
+		 	answer_index: 3
+		 },
+		 {
+		 	question:"Who played Mr. Freeze?",
+		 	answers: ['Arnold Schwarzenegger','Jean-Claude Van Damme','Vin Diesel','Michael Keaton'],
+		 	answer_index: 1
+		 },
+		 {
+		 	question:"'Salacious Crumb' is a character from what movie?",
+		 	answers: ['Goonies','Star Wars','Battlefield Earth'],
+		 	answer_index: 2
+		 },
+		 {
+		 	question:"What is an SP in Scientology?",
+		 	answers: ["social precom","sound prescence","suppressive person"],
+		 	answer_index: 3
+		 },
+		 {
+		 	question:"Much of the plutonium for the first atomic bomb was produced in what state?",
+		 	answers: ['Tennessee','New Mexico','Nevada','Colorado'],
+		 	answer_index: 1
 		 }
 	];
 
