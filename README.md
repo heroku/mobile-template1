@@ -8,6 +8,8 @@ a Postgres database.
 This application should serve as a good base for creating mobile apps to deploy on
 Heroku.
 
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
 ## How to play
 
 A set of players opens the app on their phones and registers to play. The app maintains 
