@@ -3,7 +3,7 @@ DEBUG = true;
 exports.db_client = 'pg';
 exports.db_url = process.env.DATABASE_URL || 'postgresql://localhost/quizlive';
 exports.DEBUG = DEBUG;
-exports.SQL_DEBUG = true;
+exports.SQL_DEBUG = false;
 
 exports.knex_options = {client: exports.db_client, connection: exports.db_url, debug: exports.SQL_DEBUG};
 

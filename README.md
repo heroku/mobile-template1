@@ -2,7 +2,8 @@
 
 This sample application implements a simple "live quiz" mobile game. The mobile
 app itself is a hybrid AngularJS app composed of HTML, CSS and Javascript. The
-server side is implemented as a Node.js application running on top of a Postgres database.
+server side is implemented as an Express Node.js application running on top of 
+a Postgres database.
 
 This application should serve as a good base for creating mobile apps to deploy on
 Heroku.
@@ -55,7 +56,7 @@ Clone this repo to your local machine and install the requirements:
 Now create a database on your local server called
 `quizlive`. Now create the database schema and initial data:
 
-    ./migrate.sh
+    ./bootstrap.sh
 
 And now run the server app:
 
@@ -81,8 +82,9 @@ The components of the application are organized as follows:
 | ..html templates | client/templates |
 | ..ionic/angular frameworks | client/lib | 
 |            |        |
-| express app | server |
+| express app | server.js, server/* |
 | ..db migrations | server/migrations |    
+| ..question list | server/load_question.js |
 | admin app  | admin  |
 
 
