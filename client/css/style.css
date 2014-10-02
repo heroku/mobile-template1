@@ -1,1 +1,21 @@
 /* Empty. Add your own CSS if you like */
+.home-content > .scroll {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.home-content h1 {
+    font-size: 64px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.home-content .row-logo {
+    flex-grow: 1;
+}
+
+.home-content .row-buttons {
+    flex-grow: 0;
+}

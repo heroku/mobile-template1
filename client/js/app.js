@@ -11,13 +11,10 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
   $rootScope.$on("$stateChangeStart", function(event, toState) {
       //redirect only if both isAuthenticated is false and no token is set
       
-      if (toState.name !== 'login' && toState.name !== 'signup' &&
-          toState.name !== 'logout' && toState.name !== 'register') {
-
+      if (['home', 'login', 'logout', 'signup', 'register'].indexOf(toState.name) === -1) {
         if (!AuthenticationService.isAuthenticated && !$window.localStorage.token) {
-
           event.preventDefault();
-          $location.path("/register");
+          $location.path("/home");
         }
       }
       
@@ -48,6 +45,11 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
     //   templateUrl: "templates/login.html"
     // })
 
+    .state('home', {
+      url: "/home",
+      templateUrl: "templates/home.html",
+      controller: 'HomeCtrl'
+    })
 
     .state('register', {
       url: "/register",
