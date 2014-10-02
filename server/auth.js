@@ -3,6 +3,7 @@ var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 
 var user_cache = {};
+var register_callback = null;
 
 module.exports = function(models) {
   passport.use(new LocalStrategy(
@@ -30,6 +31,9 @@ module.exports = function(models) {
           user.password = 'secret';
           user.token = uuid.v4();
           new models.User(user).save().then(function(model) {
+            if (register_callback) {
+              register_callback(model);
+            }
             res.json(model.attributes);
           }).catch(function(err) {
             console.log(err);
@@ -37,6 +41,10 @@ module.exports = function(models) {
           });
         }
     });
+  }
+
+  function on_register(callback) {
+    register_callback = callback;
   }
 
   function authenticate(req, res, next) {
@@ -47,18 +55,15 @@ module.exports = function(models) {
       token = req.query.token;
       delete req.query.token;
     }
-    console.log("Authenticating token ", token);
 
     if (token in user_cache) {
       req.user = user_cache[token];
-      console.log("Found cached user ", req.user);
       next();
     } else {
       new models.User({token:token}).fetch().then(function(model) {
           if (model) {
             user_cache[token] = model;
             req.user = model;
-            console.log("Found user ", req.user);
             return next();
           } else {
             console.log("Invalid token, returning 401");
@@ -76,6 +81,7 @@ module.exports = function(models) {
 
   return {
     register: register,
+    on_register: on_register,
     authenticate: authenticate,
     clear_leaders: clear_leaders
   }

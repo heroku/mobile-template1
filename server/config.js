@@ -7,16 +7,46 @@ exports.SQL_DEBUG = false;
 
 exports.knex_options = {client: exports.db_client, connection: exports.db_url, debug: exports.SQL_DEBUG};
 
+if (process.env.SF_OAUTH_CLIENT_ID) {
+	salesforce = {
+		username:       process.env.SF_USERNAME,
+		password:       process.env.SF_PASSWORD,
+		token:          process.env.SF_TOKEN,
+		clientId:       process.env.SF_OAUTH_CLIENT_ID,
+		clientSecret:   process.env.SF_OAUTH_CLIENT_SECRET,
+		redirectUri:    process.env.SF_OAUTH_REDIRECT_URI,
+		environment:    'production'
+	}
+	for (var k in salesforce) {
+		if (!salesforce[k]) {
+			console.log("[warn] config var " + k + " is not set. Force.com connection may fail.");
+		}
+	}
+} else {
+	salesforce = null;
+}
+
+exports.salesforce = salesforce;
+
 exports.debug = function() {
 	if (DEBUG) {
-		console.log("[debug] ", arguments);
+		console.log.apply(console, ["[debug]"].concat(Array.prototype.slice.call(arguments, 0)));
+	}
+}
+
+exports.info = function() {
+	if (DEBUG) {
+		console.log.apply(console, ["[info]"].concat(Array.prototype.slice.call(arguments, 0)));
 	}
 }
 
 exports.warn = function() {
-	console.log("[warn] ", arguments);
+	arguments.unshift(['warn']);
+	console.log.apply(console, arguments);
 }
 
 exports.error = function() {
-	console.log("[error] ", arguments);
+	arguments.unshift(['error']);
+	console.log.apply(console, arguments);
 }
+

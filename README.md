@@ -89,6 +89,11 @@ The components of the application are organized as follows:
 | ..question list | server/load_question.js |
 | admin app  | admin  |
 
+# Accessing Force.com
+
+This template shows how to access the Force.com API to exchange data with a Salesforce
+account. See [force.js](server/force.js) for full instructions.
+
 
 
 

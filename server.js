@@ -10,7 +10,8 @@ var http           = require('http'),
     models         = require('./server/models')(bookshelf),
     notifier       = require('./server/notifier'),
     restful        = require('./server/bookshelf_rest'),
-    auth           = require('./server/auth')(models)
+    auth           = require('./server/auth')(models),
+    force          = require('./server/force')
     ;
 
 /********************* APP SETUP *****************************/
@@ -36,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'server/pages')));
 
 // Logging
 app.use(function(req, res, next){
-  logger.debug('%s %s', req.method, req.url);
+  logger.debug(req.method, req.url);
   next();
 });
 
@@ -99,6 +100,9 @@ function save_answer(req, res, callback) {
 
 /********************* NOTIFICATIONS *****************************/
 
+auth.on_register(function(user) {
+  force.create_lead(user.get('name'), user.get('email'));
+});
 
 notifier(bookshelf,
   {
