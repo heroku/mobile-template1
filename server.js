@@ -114,6 +114,8 @@ notifier(bookshelf,
       .then(function(question) {
         question = question.attributes;
         question.answer_index = null;
+        question.question_index = 0;
+        question.question_total = 10;
         console.log("Loaded question ", question);
         if (question.show) {
           console.log("Sending next question: ", question);
