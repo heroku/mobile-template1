@@ -41,12 +41,10 @@ exports.info = function() {
 }
 
 exports.warn = function() {
-	arguments.unshift(['warn']);
-	console.log.apply(console, arguments);
+  console.log.apply(console, ["[WARN]"].concat(Array.prototype.slice.call(arguments, 0)));
 }
 
 exports.error = function() {
-	arguments.unshift(['error']);
-	console.log.apply(console, arguments);
+	console.log.apply(console, ["[ERROR]"].concat(Array.prototype.slice.call(arguments, 0)));
 }
 

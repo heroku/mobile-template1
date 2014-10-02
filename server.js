@@ -70,9 +70,11 @@ function save_answer(req, res, callback) {
     if (q.attributes.answer_index == answer.answer_index) {
 
       io.emit('_every_answer', JSON.stringify({user: req.user, correct: true}));
-
+      force.add_correct_answer(req.user.get('email'));
+       
       models.Answer.query({select:'*'}).where({question_id: answer.question_id})
         .fetchAll().then(function(collection) {
+
         if (collection.length > 0) {
           // soneone already answered this question
           req.user.incrPoints(2);

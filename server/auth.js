@@ -6,24 +6,12 @@ var user_cache = {};
 var register_callback = null;
 
 module.exports = function(models) {
-  passport.use(new LocalStrategy(
-    function(username, password, done) {
-      User.findOne({ username: username }, function(err, user) {
-        if (err) { return done(err); }
-        if (!user) {
-          return done(null, false, { message: 'Incorrect username.' });
-        }
-        if (!user.validPassword(password)) {
-          return done(null, false, { message: 'Incorrect password.' });
-        }
-        return done(null, user);
-      });
-    }
-  ));
-
   function register(req, res, next) {
     var user = req.body;
 
+    delete user['password2'];
+    
+    console.log("Registering ", user);
     new models.User({name:user.name}).fetch().then(function(model) {
         if (model) {
           return res.json(model.attributes);

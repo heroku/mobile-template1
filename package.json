@@ -9,7 +9,7 @@
     "express": "^4.9.5",
     "knex": "^0.6.22",
     "method-override": "^2.2.0",
-    "nforce": "^0.8.0-beta.6",
+    "nforce": "~0.7.0",
     "node-uuid": "^1.4.1",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",

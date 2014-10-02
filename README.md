@@ -91,8 +91,10 @@ The components of the application are organized as follows:
 
 # Accessing Force.com
 
-This template shows how to access the Force.com API to exchange data with a Salesforce
-account. See [force.js](server/force.js) for full instructions.
+As an option, the app can be configured so that each person who registers to play is
+recorded as a Lead record in Salesforce. This template shows how to access the 
+Force.com API to exchange data with a Salesforce account. See [FORCE_README](FORCE_README.md) 
+for full instructions. 
 
 
 
