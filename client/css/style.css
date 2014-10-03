@@ -1,4 +1,19 @@
-/* Empty. Add your own CSS if you like */
+/* Add your own CSS if you like */
+.button {
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.button.button-positive {
+    background-color: #00a1df;
+    border-color: #00a1df;
+}
+
+.home-content {
+    background: url(/img/splash-background.png) no-repeat;
+    background-size: cover;
+}
+
 .home-content > .scroll {
     display: flex;
     flex-direction: column;
