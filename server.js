@@ -10,7 +10,8 @@ var http           = require('http'),
     models         = require('./server/models')(bookshelf),
     notifier       = require('./server/notifier'),
     restful        = require('./server/bookshelf_rest'),
-    auth           = require('./server/auth')(models)
+    auth           = require('./server/auth')(models),
+    force          = require('./server/force')
     ;
 
 /********************* APP SETUP *****************************/
@@ -36,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'server/pages')));
 
 // Logging
 app.use(function(req, res, next){
-  logger.debug('%s %s', req.method, req.url);
+  logger.debug(req.method, req.url);
   next();
 });
 
@@ -69,9 +70,11 @@ function save_answer(req, res, callback) {
     if (q.attributes.answer_index == answer.answer_index) {
 
       io.emit('_every_answer', JSON.stringify({user: req.user, correct: true}));
-
+      force.add_correct_answer(req.user.get('email'));
+       
       models.Answer.query({select:'*'}).where({question_id: answer.question_id})
         .fetchAll().then(function(collection) {
+
         if (collection.length > 0) {
           // soneone already answered this question
           req.user.incrPoints(2);
@@ -99,6 +102,9 @@ function save_answer(req, res, callback) {
 
 /********************* NOTIFICATIONS *****************************/
 
+auth.on_register(function(user) {
+  force.create_lead(user.get('name'), user.get('email'));
+});
 
 notifier(bookshelf,
   {
@@ -108,6 +114,8 @@ notifier(bookshelf,
       .then(function(question) {
         question = question.attributes;
         question.answer_index = null;
+        question.question_index = 0;
+        question.question_total = 10;
         console.log("Loaded question ", question);
         if (question.show) {
           console.log("Sending next question: ", question);

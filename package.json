@@ -9,6 +9,7 @@
     "express": "^4.9.5",
     "knex": "^0.6.22",
     "method-override": "^2.2.0",
+    "nforce": "~0.7.0",
     "node-uuid": "^1.4.1",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
@@ -22,6 +23,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "load_questions": "node server/load_questions.js"
   },
-  "author": "",
-  "license": "ISC"
+  "author": {
+    "name":"Scott Persinger",
+    "email":"scottp@heroku.com",
+    "url":"https://twitter.com/persingerscott"
+  },
+  "repository":"https://github.com/heroku/mobile-template1",
+  "homepage":"https://github.com/heroku/mobile-template1",
+  "license": "MIT"
 }

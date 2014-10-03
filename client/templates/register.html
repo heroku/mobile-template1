@@ -9,11 +9,19 @@
         <div class="list list-inset" style="margin-top: 100px;">
 
             <label class="item item-input">
-                <input type="text" placeholder="Name" ng-model="user.name">
+                <input type="text" placeholder="Full Name" ng-model="user.name">
             </label>
 
             <label class="item item-input">
                 <input type="text" placeholder="Email" ng-model="user.email">
+            </label>
+
+            <label class="item item-input">
+                <input type="password" placeholder="Password" ng-model="user.password">
+            </label>
+
+            <label class="item item-input">
+                <input type="password" placeholder="Re-enter password" ng-model="user.password2">
             </label>
 
             <button class="button button-block button-stable" ng-click="register()">

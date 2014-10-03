@@ -5,7 +5,6 @@ module.exports = function(model, resource, options) {
 
 	var router = express.Router();
 	router.get('/' + resource, function(req, res, next) {
-		console.log("Params ", req.query);
 		var select = '*';
 		if (req.query.select) {
 			select = req.query.select;
@@ -24,7 +23,6 @@ module.exports = function(model, resource, options) {
 	});
 
 	function save_item(item, res) {
-		console.log("[save] ", item);
 		new model(item).save().then(function(row) {
 			res.json(row);
 		}).catch(function(err) {

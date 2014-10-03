@@ -93,7 +93,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('RegisterCtrl', function($scope, $location, RegistrationService) {
-	$scope.user = {name:'', email:''};
+	$scope.user = {name:'', email:'', password:'', password2: ''};
 
 	$scope.register = function() {
 		RegistrationService.register($scope.user).then(function() {

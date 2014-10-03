@@ -78,11 +78,6 @@ var qs = [
 	 	answer_index: 4
 	 },
 	 {
-	 	question:"What was the subject of Cindy Lauper\s song 'She Bop'?",
-	 	answers: ['teen pregnancy','masturbation','school dances'],
-	 	answer_index: 2
-	 },
-	 {
 	 	question:"Who turned down the lead for the movie 'American Beauty'?",
 	 	answers: ['Alan Alda','Chevy Chase','Robert Downey Jr.'],
 	 	answer_index:2
