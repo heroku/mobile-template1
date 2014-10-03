@@ -96,6 +96,11 @@ recorded as a Lead record in Salesforce. This template shows how to access the
 Force.com API to exchange data with a Salesforce account. See [FORCE_README](FORCE_README.md) 
 for full instructions. 
 
+# Contact
 
+Scott Persinger <scottp@heroku.com>
 
+# License
+
+See LICENSE. This code is available under the MIT license.
 
