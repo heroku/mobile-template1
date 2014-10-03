@@ -92,3 +92,39 @@ angular.module('starter.services', [])
         }
     }
 })
+
+.factory('UserResponse', function() {
+    var storageKey = 'userResponses';
+    
+    var localGet = function(){
+        var ret = localStorage.getItem(storageKey);
+        if (ret === null) {
+            ret = {};
+        }
+        else {
+            ret = JSON.parse(ret);
+        }
+        return ret;
+    };
+
+    var localSet = function(val){
+        localStorage.setItem(storageKey, JSON.stringify(val));
+    };
+
+    return {
+        set: function(key, value){
+            var answers = localGet();
+            answers[key] = value;
+            localSet(answers);
+        },
+
+        get: function(key){
+            var answers = localGet();
+            return answers[key];
+        },
+
+        reset: function(){
+            localStorage.removeItem(storageKey);
+        }
+    };
+})

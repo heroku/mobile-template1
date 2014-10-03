@@ -9,23 +9,58 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('QuizCtrl', function($scope, $ionicPopup, $ionicLoading, SocketIO, Question, Answer, RegistrationService) {
-	$scope.q = {question:"...waiting for next question..."};
+.controller('QuizCtrl', function($scope, $ionicPopup, $ionicLoading, SocketIO, Question, Answer, RegistrationService, UserResponse) {
+	$scope.q = {};
 	$scope.q.answers = ['one','two','three'];
 	$scope.answer = null;
 	$scope.show_leaders = false;
-	$scope.secondsLeft = 10;
 	$scope.correct_answer = null;
+
+	$scope.hasAnswered = function(){
+		// Has the user answered the current question already?
+		return UserResponse.get($scope.q.id) !== undefined;
+	};
+
+	$scope.userAnswerCorrect = function(index){
+		// Is this the index of the user's response, and is it the right answer
+		index = index + 1;
+		return UserResponse.get($scope.q.id) === index && index === $scope.q.answer_index;
+	};
+
+	$scope.userAnswerWrong = function(index){
+		// Is this the index of the user's response, and is it the wrong answer
+		index = index + 1;
+		return UserResponse.get($scope.q.id) === index && index !== $scope.q.answer_index;
+	};
+
+	$scope.isCorrectAnswer = function(index){
+		// Is this the index of the correct answer
+		index = index + 1;
+		return index === $scope.q.answer_index;
+	};
+
+	$scope.saveChoice = function(index) {
+		UserResponse.set($scope.q.id, index + 1);
+		var a = new Answer({question_id: $scope.q.id, user_id: '1', answer_index: index + 1});
+		a.$save(function() {
+			// Right answer
+			showLeaders();
+		}, function() {
+			// Wrong answer
+			showLeaders();
+		});
+	};
 
 	Question.query({show:true, select:['question','answers']}, function(rows) {
 		console.log("Questions returned ", rows);
 		$scope.q = rows[0];
+		console.log($scope.q);
 		check_start();
 	});
 
 	function check_start() {
 		if ($scope.q.question == 'start') {
-			$scope.q.answers = [];
+			// $scope.q.answers = [];
 		} else if ($scope.q.question == 'end') {
 			showLeaders();
 		}
@@ -35,12 +70,17 @@ angular.module('starter.controllers', [])
 		$scope.correct_answer = null;
 		msg = JSON.parse(msg);
 
-		if (msg.question != 'end') {
-			$scope.timer = 3;
-			$ionicLoading.show({template: 'Next question in 3 seconds...'});
-		} else {
+		if (msg.question === 'start') {
+			UserResponse.reset();
+		}
+		else if (msg.question === 'end') {
 			showLeaders();
 			$scope.timer = 1;
+			UserResponse.reset();
+		}
+		else {
+			$scope.timer = 3;
+			$ionicLoading.show({template: 'Next question in 3 seconds...'});
 		}
 
 		var timer = setInterval(function() {
@@ -48,13 +88,12 @@ angular.module('starter.controllers', [])
 	   		$ionicLoading.show({template: 'Next question in ' + $scope.timer + ' seconds...'});
 
 			if ($scope.timer <= 0) {
+				clearInterval(timer);
 				if (msg.question != 'end') {
 					hideLeaders();
 				}
 				$ionicLoading.hide();
-				clearInterval(timer);
 				$scope.q = msg;
-				$scope.answer = null;
 				check_start();
 				console.log($scope.q);
  				$scope.$apply();
@@ -72,24 +111,6 @@ angular.module('starter.controllers', [])
         SocketIO.removeAllListeners('questions');
         SocketIO.removeAllListeners('answer');
     });
-
-	$scope.saveChoice = function(index) {
-		$scope.answer_color = 'button-stable';
-		$scope.answer = $scope.q.answers[index];
-		$scope.q.answers = [];
-		var a = new Answer({question_id: $scope.q.id, user_id: '1', answer_index: index+1});
-		a.$save(function() {
-			// Right answer
-			$scope.answer_color = 'button-balanced';
-			$scope.answer_icon = 'ion-checkmark';
-			showLeaders();
-		}, function() {
-			// Wrong answer
-			$scope.answer_color = 'button-assertive';
-			$scope.answer_icon = 'ion-close-round';
-			showLeaders();
-		});
-	}
 
 	function showLeaders() {
 		$scope.show_leaders = true;
@@ -136,5 +157,9 @@ angular.module('starter.controllers', [])
 	$scope.$on('$destroy', function (event) {
         SocketIO.removeAllListeners('answer');
     });
+
+})
+
+.controller('HomeCtrl', function($scope, $location) {
 
 })
