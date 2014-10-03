@@ -64,7 +64,6 @@ app.delete('/resource/leaders', auth.clear_leaders);
 function save_answer(req, res, callback) {
   var answer = req.body;
 
-
   answer.user_id = req.user.id;
 
   new models.Question({id: answer.question_id}).fetch().then(function(q) {

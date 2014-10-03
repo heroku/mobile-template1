@@ -5,6 +5,20 @@ module.exports = function(bookshelf) {
         incrPoints: function(val) {
             this.set('points', this.get('points') + val);
             return this.save();
+        },
+
+        initialize: function() {
+            this.on('creating', this.set_admin);
+        },
+
+        set_admin: function() {
+            var self = this;
+            return bookshelf.knex('users').count().then(function(result) {
+                if (result[0] && result[0].count == 0) {
+                    console.log("Marking first user " + self.get("email") + " as admin");
+                    self.set('is_admin', true);
+                }
+            });
         }
     });
 
