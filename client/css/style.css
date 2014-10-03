@@ -9,6 +9,7 @@
     border-color: #00a1df;
 }
 
+/* home screen */
 .home-content {
     background: url(/img/splash-background.png) no-repeat;
     background-size: cover;
@@ -33,4 +34,8 @@
 
 .home-content .row-buttons {
     flex-grow: 0;
+}
+
+.home-content .button:last-child {
+    margin-bottom: 0;
 }

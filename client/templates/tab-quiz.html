@@ -1,28 +1,35 @@
 <ion-view title="Live Quiz">
   <ion-content class="padding">
 
-	<div class="card" ng-show="q.question != 'start' && q.question != 'end'">
-	  <div class="item item-text-wrap">
-	    <h3>{{q.question}}</h3>
-	  </div>
-	</div>
+    <div class="" ng-show="q.question != 'start' && q.question != 'end'">
+      <div class="item item-text-wrap">
+        <h3>{{q.question}}</h3>
+      </div>
 
-    <form class="list">
-        <button class="button button-block button-stable" ng-repeat="choice in q.answers"
-                   ng-value="$index"
-                   ng-click="saveChoice($index)">
-            {{ choice }}
-        </button>
-    </form>
+      <div class="" ng-if="!hasAnswered()">
+        <div class="list">
+          <a class="item item-icon-left" ng-repeat="choice in q.answers" ng-value="$index" ng-click="saveChoice($index)">
+              <h2>{{ choice }}</h2>
+          </a>
+        </div>
+      </div>
 
-    <button style="color:black;font-weight:bold" class="button button-block button-positive" ng-class="answer_color" ng-show="answer">
-      <i class="icon" ng-class="answer_icon"></i>
-      {{answer}}
-    </button>
+      <div class="" ng-if="hasAnswered()">
+        <div class="list">
+          <a class="item item-icon-left" ng-repeat="choice in q.answers">
+              <i class="icon ion-checkmark balanced" ng-show="isCorrectAnswer($index)"></i>
+              <h2 ng-class='{"balanced": userAnswerCorrect($index), "assertive": userAnswerWrong($index)}'>{{ choice }}</h2>
+          </a>
+        </div>
 
-    <div class="list bar bar-header bar-energized" ng-show="show_leaders && correct_answer" style="box-shadow:3px 3px #333333;padding:10px">
-      <h1 class="title"><b style="font-size:1.5em">!! {{correct_answer.answer}} !!</b> <b>{{correct_answer.user.name}}</b> answered correctly first</h1>
+        <a class="item item-icon-left item-text-wrap" ng-show="correct_answer">
+          <i class="icon ion-ios7-star energized"></i>
+          <h2 class="energized"><strong>{{correct_answer.user.name}}</strong> answered correctly first!</h2>
+        </a>
+
+      </div>
     </div>
+
 
     <div class="list card" ng-show="show_leaders" style="box-shadow:3px 3px #333333;background-color:#FFFF00;padding:10px">
       <h3 style="font-size:1em">Leaderboard</h3>
@@ -40,5 +47,6 @@
       <h4 style="color:white">First correct earns 5 points!</h4>
       <h4 style="color:white">Any correct earns 2 points!</h4>
     </div>
+
   </ion-content>
 </ion-view>
