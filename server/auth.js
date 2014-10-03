@@ -1,31 +1,66 @@
-var passport = require('passport'),
-    uuid     = require('node-uuid'),
-    LocalStrategy = require('passport-local').Strategy;
+var bcrypt    = require('bcrypt'),
+    uuid      = require('node-uuid'),
+    validator = require('validator')
+    ;
 
 var user_cache = {};
 var register_callback = null;
 
+function encryptPassword(password, callback) {
+    bcrypt.genSalt(10, function (err, salt) {
+        if (err) {
+            return callback(err);
+        }
+        bcrypt.hash(password, salt, function (err, hash) {
+            return callback(err, hash);
+        });
+    });
+}
+
+function comparePassword(password, hash, callback) {
+    bcrypt.compare(password, hash, function (err, match) {
+        if (err) {
+            return callback(err);
+        } else {
+          return callback(null, match);
+        }
+    });
+}
+
 module.exports = function(models) {
+  
   function register(req, res, next) {
     var user = req.body;
 
+    if (!validator.isEmail(user.email)) {
+      return res.status(400).send("Invalid email address");
+    }
+    if (!validator.isLength(user.name, 3)) {
+      return res.status(400).send("Name must be at least 3 characters");
+    }
+    if (!validator.isLength(user.password, 3)) {
+        return res.send(400, "Password must be at least 3 characters");
+    }
+
     delete user['password2'];
-    
+
     console.log("Registering ", user);
     new models.User({name:user.name}).fetch().then(function(model) {
         if (model) {
-          return res.json(model.attributes);
+          return next(Error("That email is already registered"));
         } else {
-          user.password = 'secret';
-          user.token = uuid.v4();
-          new models.User(user).save().then(function(model) {
-            if (register_callback) {
-              register_callback(model);
-            }
-            res.json(model.attributes);
-          }).catch(function(err) {
-            console.log(err);
-            res.status(500).send(err);
+          encryptPassword(user.password, function (err, hash) {
+            if (err) return next(err);
+
+            user.token = uuid.v4();
+
+            new models.User(user).save().then(function(model) {
+              if (register_callback) {
+                register_callback(model);
+              }
+              res.json(model.attributes);
+
+            }).catch(next);
           });
         }
     });
