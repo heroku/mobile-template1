@@ -95,7 +95,7 @@ function save_answer(req, res, callback) {
       });
     } else {
       io.emit('_every_answer', JSON.stringify({user: req.user, correct: false}));
-      res.status(500).send('Incorrect');
+      res.status(500).json(q);
       console.log("ERROR!! ", answer);
     }
   });

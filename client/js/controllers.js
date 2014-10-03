@@ -15,6 +15,7 @@ angular.module('starter.controllers', [])
 	$scope.answer = null;
 	$scope.show_leaders = false;
 	$scope.correct_answer = null;
+	$scope.answerIndex = false;
 
 	$scope.hasAnswered = function(){
 		// Has the user answered the current question already?
@@ -44,44 +45,48 @@ angular.module('starter.controllers', [])
 		var a = new Answer({question_id: $scope.q.id, user_id: '1', answer_index: index + 1});
 		a.$save(function() {
 			// Right answer
+			$scope.q.answer_index = index + 1;
+			$scope.answerIndex = true;
 			showLeaders();
-		}, function() {
+		}, function(q) {
 			// Wrong answer
+			$scope.q.answer_index = q.data.answer_index;
+			$scope.answerIndex = true;
 			showLeaders();
 		});
 	};
 
 	Question.query({show:true, select:['question','answers']}, function(rows) {
-		console.log("Questions returned ", rows);
 		$scope.q = rows[0];
-		console.log($scope.q);
+		$scope.answerIndex = true;
 		check_start();
 	});
 
 	function check_start() {
-		if ($scope.q.question == 'start') {
-			// $scope.q.answers = [];
-		} else if ($scope.q.question == 'end') {
+		if ($scope.q.question == 'end') {
 			showLeaders();
 		}
 	}
 
 	SocketIO.on('questions', function(msg){
+		$scope.answerIndex = false;
 		$scope.correct_answer = null;
+
 		msg = JSON.parse(msg);
 
 		if (msg.question === 'start') {
 			UserResponse.reset();
+			return;
 		}
 		else if (msg.question === 'end') {
 			showLeaders();
 			$scope.timer = 1;
 			UserResponse.reset();
+			return;
 		}
-		else {
-			$scope.timer = 3;
-			$ionicLoading.show({template: 'Next question in 3 seconds...'});
-		}
+
+		$scope.timer = 3;
+		$ionicLoading.show({template: 'Next question in 3 seconds...'});
 
 		var timer = setInterval(function() {
 			$scope.timer--;
@@ -95,14 +100,12 @@ angular.module('starter.controllers', [])
 				$ionicLoading.hide();
 				$scope.q = msg;
 				check_start();
-				console.log($scope.q);
  				$scope.$apply();
 			} 
 		}, 1000);
 	});
 
 	SocketIO.on('answer', function(msg) {
-		console.log("Answer ws ", msg);
 		var packet = JSON.parse(msg);
 		$scope.correct_answer = packet;
 	});
