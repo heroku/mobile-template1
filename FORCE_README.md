@@ -1,6 +1,6 @@
 # Integration with Force.com
 
-This module shows how to use the [Nforce]([nforce](https://github.com/kevinohara80/nforce) 
+The [force.js](server/force.js) module shows how to use the [Nforce]([nforce](https://github.com/kevinohara80/nforce) 
 package to interact with data on force.com. To use this module, you need to:
 
 Create a Connect App with API access in Salesforce and copy down your OAuth consumer credentials.
