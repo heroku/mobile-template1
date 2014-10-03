@@ -8,10 +8,12 @@
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','ngResource'])
 
 .run(function($window, $location, $ionicPlatform, $rootScope, AuthenticationService) {
+  $rootScope.user = {name: $window.sessionStorage.name};
+
   $rootScope.$on("$stateChangeStart", function(event, toState) {
       //redirect only if both isAuthenticated is false and no token is set
       
-      if (toState.name !== 'login' && toState.name !== 'signup' &&
+      if (toState.name !== 'login' &&
           toState.name !== 'logout' && toState.name !== 'register') {
 
         if (!AuthenticationService.isAuthenticated && !$window.localStorage.token) {
@@ -55,6 +57,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
       controller: 'RegisterCtrl'
     })
 
+    .state('login', {
+      url: "/login",
+      templateUrl: "templates/login.html",
+      controller: 'LoginCtrl'
+    })
+
     // setup an abstract state for the tabs directive
     .state('tab', {
       url: "/tab",
@@ -90,13 +98,5 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
   // Register middleware to ensure our auth token is passed to the server
   $httpProvider.interceptors.push('TokenInterceptor');
 
-})
-
-.controller('AppCtrl', function($scope, $location, RegistrationService) {
-  $scope.logout = function() {
-    RegistrationService.logout();
-    $location.path("/register");
-  }
-  $scope.timeleft = '0 secs';
 })
 

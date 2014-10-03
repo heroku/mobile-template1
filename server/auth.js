@@ -18,6 +18,7 @@ function encryptPassword(password, callback) {
 }
 
 function comparePassword(password, hash, callback) {
+    console.log("Comparing ", password, " to hash ", hash);
     bcrypt.compare(password, hash, function (err, match) {
         if (err) {
             return callback(err);
@@ -28,7 +29,11 @@ function comparePassword(password, hash, callback) {
 }
 
 module.exports = function(models) {
-  
+  function clean_user(user) {
+      delete user['crypted_password'];
+      return user;
+  }
+
   function register(req, res, next) {
     var user = req.body;
 
@@ -39,13 +44,12 @@ module.exports = function(models) {
       return res.status(400).send("Name must be at least 3 characters");
     }
     if (!validator.isLength(user.password, 3)) {
-        return res.send(400, "Password must be at least 3 characters");
+        return res.status(400).send("Password must be at least 3 characters");
     }
 
-    delete user['password2'];
 
     console.log("Registering ", user);
-    new models.User({name:user.name}).fetch().then(function(model) {
+    new models.User({email:user.email}).fetch().then(function(model) {
         if (model) {
           return next(Error("That email is already registered"));
         } else {
@@ -53,16 +57,51 @@ module.exports = function(models) {
             if (err) return next(err);
 
             user.token = uuid.v4();
+            user.crypted_password = hash;
+
+            delete user['password'];
+            delete user['password2'];
 
             new models.User(user).save().then(function(model) {
               if (register_callback) {
                 register_callback(model);
               }
-              res.json(model.attributes);
+              res.json(clean_user(model.attributes));
 
             }).catch(next);
           });
         }
+    });
+  }
+
+  function login(req, res, next) {
+    var user = req.body;
+
+    new models.User({email:user.email}).fetch().then(function(model) {
+      if (!model) {
+          return res.status(401).send("Invalid credentials");
+      }
+
+      console.log("Compare user ", user, " to model ", model.attributes);
+
+      comparePassword(user.password, model.get("crypted_password"), function(err, match) {
+        if (err) {
+          console.log(err);
+          return res.status(401).send("Invalid Credentials");
+        }
+        if (match) {
+            model.token = uuid.v4();
+
+            model.save().then(function(model) {
+              res.json(clean_user(model.attributes));
+
+            }).catch(next);
+
+        } else {
+            // Passwords don't match
+            return res.status(401).send("Invalid Credentials");
+        }
+      });
     });
   }
 
@@ -103,9 +142,10 @@ module.exports = function(models) {
 
 
   return {
-    register: register,
-    on_register: on_register,
-    authenticate: authenticate,
+    register:      register,
+    login:         login,
+    on_register:   on_register,
+    authenticate:  authenticate,
     clear_leaders: clear_leaders
   }
 }

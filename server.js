@@ -50,6 +50,7 @@ app.use(function(err, req, res, next) {
 /********************* ROUTES *****************************/
 
 app.use('/register', auth.register);
+app.use('/login', auth.login);
 
 app.all('/resource/*', auth.authenticate);
 
@@ -94,7 +95,7 @@ function save_answer(req, res, callback) {
       });
     } else {
       io.emit('_every_answer', JSON.stringify({user: req.user, correct: false}));
-      res.send(500, 'Incorrect');
+      res.status(500).send('Incorrect');
       console.log("ERROR!! ", answer);
     }
   });
@@ -112,13 +113,10 @@ notifier(bookshelf,
       new models.Question({id:question_id})
       .fetch()
       .then(function(question) {
-        question = question.attributes;
-        question.answer_index = null;
-        question.question_index = 0;
-        question.question_total = 10;
-        console.log("Loaded question ", question);
-        if (question.show) {
-          console.log("Sending next question: ", question);
+        if (question.get('show')) {
+          question.set('answer_index', null);
+          question.set('question_index', 0);
+          question.set('question_total', 10);
           io.emit('questions', JSON.stringify(question));
         }
       });

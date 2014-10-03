@@ -1,5 +1,14 @@
 angular.module('starter.controllers', [])
 
+.controller('AppCtrl', function($scope, $location, RegistrationService) {
+  $scope.logout = function() {
+    RegistrationService.logout();
+    $location.path("/register");
+  }
+  $scope.timeleft = '0 secs';
+})
+
+
 .controller('QuizCtrl', function($scope, $ionicPopup, $ionicLoading, SocketIO, Question, Answer, RegistrationService) {
 	$scope.q = {question:"...waiting for next question..."};
 	$scope.q.answers = ['one','two','three'];
@@ -95,11 +104,26 @@ angular.module('starter.controllers', [])
 .controller('RegisterCtrl', function($scope, $location, RegistrationService) {
 	$scope.user = {name:'', email:'', password:'', password2: ''};
 
+	$scope.$parent.logout_text = 'Logout';
+
 	$scope.register = function() {
 		RegistrationService.register($scope.user).then(function() {
 			$location.path("/");
 		})
 	}
+})
+
+.controller('LoginCtrl', function($scope, $location, RegistrationService) {
+	$scope.user = {email: '', password: ''};
+
+	$scope.$parent.logout_text = 'Register';
+
+	$scope.login = function() {
+		RegistrationService.login($scope.user.email, $scope.user.password).then(function() {
+			$location.path("/");
+		});
+	}
+
 })
 
 .controller('LeadersCtrl', function($scope, SocketIO, Answer) {

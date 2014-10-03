@@ -25,7 +25,7 @@ function login() {
 			               password: config.salesforce.password + config.salesforce.token}, function(err, resp){
 		  // the oauth object was stored in the connection object
 		  if(err) {
-		  	condfig.error("Force.com connection error: ", err);
+		  	config.error("Force.com connection error: ", err);
 		  } else {
 		  	config.info('Connected to force.com: ' + org.oauth.id);
 		  }

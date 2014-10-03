@@ -12,6 +12,7 @@ exports.up = function(knex, Promise) {
 			      table.string('name').notNullable().index();
 			      table.string('email').notNullable();
 			      table.string('crypted_password').notNullable();
+			      table.string('salt').notNullable();
 			      table.string('token').index();
 			      table.timestamps();
 				  console.log("done with users table");

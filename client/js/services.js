@@ -54,7 +54,7 @@ angular.module('starter.services', [])
             if (rejection != null && rejection.status === 401 && ($window.localStorage.token || AuthenticationService.isAuthenticated)) {
                 delete $window.localStorage.token;
                 AuthenticationService.isAuthenticated = false;
-                $location.path("/admin/login");
+                $location.path("/register");
             }
 
             return $q.reject(rejection);
@@ -62,10 +62,17 @@ angular.module('starter.services', [])
     };
 })
 
-.factory('RegistrationService', function ($window, $http, AuthenticationService) {
+.factory('RegistrationService', function ($window, $http, $ionicPopup, $rootScope, AuthenticationService) {
     return {
-        login: function(username, password) {
-            return $http.post('/login', {username: username, password: password});
+        login: function(email, password) {
+            return $http.post('/login', {email: email, password: password}).then(function(result) {
+                $rootScope.user = result.data;
+                AuthenticationService.isAuthenticated = true;
+                $window.sessionStorage.name = result.data.name;
+                $window.localStorage.token = result.data.token;
+            }).catch(function (err) {
+                $ionicPopup.alert({title: 'Failed', content: err.data});
+            });;
         },
 
         logout: function() {
@@ -74,9 +81,13 @@ angular.module('starter.services', [])
 
         register: function(user) {
             return $http.post('/register', user).then(function(result) {
+                $rootScope.user = result.data;
                 AuthenticationService.isAuthenticated = true;
+                $window.sessionStorage.name = result.data.name;
                 $window.localStorage.token = result.data.token;
                 console.log(result.data);
+            }).catch(function(err) {
+                $ionicPopup.alert({title: 'Failed', content: err.data});
             });
         }
     }
