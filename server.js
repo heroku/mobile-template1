@@ -3,7 +3,6 @@ var http           = require('http'),
     express        = require('express'),
     bodyParser     = require('body-parser'),
     methodOverride = require('method-override'),
-    passport       = require('passport')
     path           = require('path'),
     knex           = require('knex')(config.knex_options),
     bookshelf      = require('bookshelf')(knex),
@@ -71,7 +70,7 @@ function save_answer(req, res, callback) {
 
       io.emit('_every_answer', JSON.stringify({user: req.user, correct: true}));
       force.add_correct_answer(req.user.get('email'));
-       
+
       models.Answer.query({select:'*'}).where({question_id: answer.question_id})
         .fetchAll().then(function(collection) {
 
@@ -81,7 +80,7 @@ function save_answer(req, res, callback) {
           res.send('OK');
 
         } else {
-          callback(answer); 
+          callback(answer);
           req.user.incrPoints(5);
           // Tell everyone the question is answered
           var theAnswer = '';
@@ -135,5 +134,3 @@ server.listen(app.get('port'), function () {
 io.on('connection', function(socket){
   console.log('a user connected');
 });
-
-
