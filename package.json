@@ -12,9 +12,9 @@
     "method-override": "^2.2.0",
     "nforce": "~0.7.0",
     "node-uuid": "^1.4.1",
+    "passport": "0.2.1",
     "pg": "^3.4.4",
     "socket.io": "^1.1.0",
-    "sqlite3": "^3.0.0",
     "validator": "~3.5.0",
     "websocket": "^1.0.8"
   },
