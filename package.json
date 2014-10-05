@@ -1,0 +1,34 @@
+{
+  "name": "quizlive",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "bcrypt": "~0.7.7",
+    "body-parser": "^1.3.1",
+    "bookshelf": "^0.7.7",
+    "express": "^4.9.5",
+    "knex": "^0.6.22",
+    "method-override": "^2.2.0",
+    "nforce": "~0.7.0",
+    "node-uuid": "^1.4.1",
+    "pg": "^3.4.4",
+    "socket.io": "^1.1.0",
+    "sqlite3": "^3.0.0",
+    "validator": "~3.5.0",
+    "websocket": "^1.0.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "load_questions": "node server/load_questions.js"
+  },
+  "author": {
+    "name":"Scott Persinger",
+    "email":"scottp@heroku.com",
+    "url":"https://twitter.com/persingerscott"
+  },
+  "repository":"https://github.com/heroku/mobile-template1",
+  "homepage":"https://github.com/heroku/mobile-template1",
+  "license": "MIT"
+}

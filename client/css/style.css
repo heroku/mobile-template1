@@ -1,0 +1,41 @@
+/* Add your own CSS if you like */
+.button {
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.button.button-positive {
+    background-color: #00a1df;
+    border-color: #00a1df;
+}
+
+/* home screen */
+.home-content {
+    background: url(/img/splash-background.png) no-repeat;
+    background-size: cover;
+}
+
+.home-content > .scroll {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.home-content h1 {
+    font-size: 64px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.home-content .row-logo {
+    flex-grow: 1;
+}
+
+.home-content .row-buttons {
+    flex-grow: 0;
+}
+
+.home-content .button:last-child {
+    margin-bottom: 0;
+}

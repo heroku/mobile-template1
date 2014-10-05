@@ -1,0 +1,45 @@
+<ion-view title="Register">
+
+    <!--<ion-nav-buttons side="right">-->
+    <!--<a class="button button-clear" href="#/app/signup">Signup</a>-->
+    <!--</ion-nav-buttons>-->
+
+    <ion-content has-header="true" padding="true">
+
+        <div class="list list-inset" style="margin-top: 100px;">
+
+            <label class="item item-input">
+                <input type="text" placeholder="Full Name" ng-model="user.name">
+            </label>
+
+            <label class="item item-input">
+                <input type="text" placeholder="Email" ng-model="user.email">
+            </label>
+
+            <label class="item item-input">
+                <input type="password" placeholder="Password" ng-model="user.password">
+            </label>
+
+            <label class="item item-input">
+                <input type="password" placeholder="Re-enter password" ng-model="user.password2">
+            </label>
+
+            <button class="button button-block button-stable" ng-click="register()">
+                Register
+            </button>
+
+            <div style="text-align: center; margin: 25px 0;">or</div>
+
+            <button class="button button-block button-positive" style="background: #3b5998" ng-click="facebookLogin()">
+                Login with Facebook
+            </button>
+
+            <a class="button button-block button-stable button-light-border" ui-sref="login">
+                Already registered?&nbsp;&nbsp;Log In&nbsp;<i class="icon-arrow-right"></i>
+            </a>
+
+        </div>
+
+    </ion-content>
+
+</ion-view>

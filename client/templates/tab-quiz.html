@@ -1,0 +1,60 @@
+<ion-view title="Live Quiz">
+    <ion-content class="padding">
+
+        <div class="" ng-show="q.question != 'start' && q.question != 'end'">
+            <div class="item item-text-wrap">
+                <h3>{{q.question}}</h3>
+            </div>
+
+            <div class="" ng-if="!hasAnswered()">
+                <div class="list">
+                    <a class="item item-icon-left" ng-repeat="choice in q.answers" ng-value="$index" ng-click="saveChoice($index)">
+                        <h2>{{ choice }}</h2>
+                    </a>
+                </div>
+            </div>
+
+            <div class="" ng-if="hasAnswered() && !answerIndex">
+                <div class="list">
+                    <a class="item item-icon-left" ng-repeat="choice in q.answers">
+                        <h2>{{ choice }}</h2>
+                    </a>
+                </div>
+            </div>
+
+            <div class="" ng-if="hasAnswered() && answerIndex">
+                <div class="list">
+                    <a class="item item-icon-left" ng-repeat="choice in q.answers">
+                        <i class="icon ion-checkmark balanced" ng-show="isCorrectAnswer($index)"></i>
+                        <h2 ng-class='{"balanced": userAnswerCorrect($index), "assertive": userAnswerWrong($index)}'>{{ choice }}</h2>
+                    </a>
+                </div>
+
+                <a class="item item-icon-left item-text-wrap" ng-show="correct_answer">
+                    <i class="icon ion-ios7-star energized"></i>
+                    <h2 class="energized"><strong>{{correct_answer.user.name}}</strong> answered correctly first!</h2>
+                </a>
+
+            </div>
+        </div>
+
+        <div ng-show="show_leaders">
+            <br>
+            <div class="list">
+                <div class="item item-divider">Leaderboard</div>
+                <div class="item" ng-repeat="user in leaders">{{user.points}}pts - {{user.name}}</div>
+            </div>
+        </div>
+
+        <div class="card" ng-show="q.question == 'end'">
+            <h1>Thanks for playing!</h1>
+        </div>
+
+        <div class="card" ng-show="q.question == 'start'">
+            <h2>The Quiz is about to start!</h2>
+            <h4>First correct earns 5 points!</h4>
+            <h4>Any correct earns 2 points!</h4>
+        </div>
+
+    </ion-content>
+</ion-view>
