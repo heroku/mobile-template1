@@ -3,7 +3,6 @@ var http           = require('http'),
     express        = require('express'),
     bodyParser     = require('body-parser'),
     methodOverride = require('method-override'),
-    passport       = require('passport')
     path           = require('path'),
     knex           = require('knex')(config.knex_options),
     bookshelf      = require('bookshelf')(knex),
