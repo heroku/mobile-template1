@@ -3,9 +3,9 @@ var config = require('./config');
 
 module.exports = {
 
-    development: {
-        client: 'pg',
-        connection: config.db_url
-    },
+  development: {
+    client: 'pg',
+    connection: config.db_url
+  },
 
 };

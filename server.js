@@ -17,7 +17,7 @@ var http           = require('http'),
 /********************* APP SETUP *****************************/
 
 app = express();
-server  = http.createServer(app);
+server = http.createServer(app);
 io = require('socket.io')(server);
 
 app.set('bookshelf', bookshelf);
@@ -36,14 +36,14 @@ app.use(express.static(path.join(__dirname, 'admin/')));
 app.use(express.static(path.join(__dirname, 'server/pages')));
 
 // Logging
-app.use(function(req, res, next){
+app.use(function(req, res, next) {
   logger.debug(req.method, req.url);
   next();
 });
 
 app.use(function(err, req, res, next) {
-    logger.error(err.stack);
-    res.status(500).send(err.message);
+  logger.error(err.stack);
+  res.status(500).send(err.message);
 });
 
 
@@ -55,7 +55,9 @@ app.use('/login', auth.login);
 app.all('/resource/*', auth.authenticate);
 
 app.use('/resource', restful(models.Question, 'questions'));
-app.use('/resource', restful(models.Answer, 'answers', {pre_save: save_answer}));
+app.use('/resource', restful(models.Answer, 'answers', {
+  pre_save: save_answer
+}));
 app.post('/resource/questions/:questionId/activate', models.activate_question);
 app.post('/resource/questions/:questionId/next', models.next_question);
 app.get('/resource/leaders', models.leaders);
@@ -66,34 +68,49 @@ function save_answer(req, res, callback) {
 
   answer.user_id = req.user.id;
 
-  new models.Question({id: answer.question_id}).fetch().then(function(q) {
+  new models.Question({
+    id: answer.question_id
+  }).fetch().then(function(q) {
     if (q.attributes.answer_index == answer.answer_index) {
 
-      io.emit('_every_answer', JSON.stringify({user: req.user, correct: true}));
+      io.emit('_every_answer', JSON.stringify({
+        user: req.user,
+        correct: true
+      }));
       force.add_correct_answer(req.user.get('email'));
-       
-      models.Answer.query({select:'*'}).where({question_id: answer.question_id})
+
+      models.Answer.query({
+          select: '*'
+        }).where({
+          question_id: answer.question_id
+        })
         .fetchAll().then(function(collection) {
 
-        if (collection.length > 0) {
-          // soneone already answered this question
-          req.user.incrPoints(2);
-          res.send('OK');
+          if (collection.length > 0) {
+            // soneone already answered this question
+            req.user.incrPoints(2);
+            res.send('OK');
 
-        } else {
-          callback(answer); 
-          req.user.incrPoints(5);
-          // Tell everyone the question is answered
-          var theAnswer = '';
-          try {
-            theAnswer = q.attributes.answers[q.attributes.answer_index-1];
-          } catch (e) {}
-          io.emit('answer', JSON.stringify({user: req.user, question_id: answer.question_id,
-                                            answer: theAnswer}));
-        }
-      });
+          } else {
+            callback(answer);
+            req.user.incrPoints(5);
+            // Tell everyone the question is answered
+            var theAnswer = '';
+            try {
+              theAnswer = q.attributes.answers[q.attributes.answer_index - 1];
+            } catch (e) {}
+            io.emit('answer', JSON.stringify({
+              user: req.user,
+              question_id: answer.question_id,
+              answer: theAnswer
+            }));
+          }
+        });
     } else {
-      io.emit('_every_answer', JSON.stringify({user: req.user, correct: false}));
+      io.emit('_every_answer', JSON.stringify({
+        user: req.user,
+        correct: false
+      }));
       res.status(500).json(q);
       console.log("ERROR!! ", answer);
     }
@@ -106,10 +123,11 @@ auth.on_register(function(user) {
   force.create_lead(user.get('name'), user.get('email'));
 });
 
-notifier(bookshelf,
-  {
-    'questions': function(question_id) {
-      new models.Question({id:question_id})
+notifier(bookshelf, {
+  'questions': function(question_id) {
+    new models.Question({
+        id: question_id
+      })
       .fetch()
       .then(function(question) {
         if (question.get('show')) {
@@ -119,21 +137,18 @@ notifier(bookshelf,
           io.emit('questions', JSON.stringify(question));
         }
       });
-    }
   }
-)
+})
 
 /********************* SERVER STARTT *****************************/
 
 
 app.set('port', process.env.PORT || 5000);
 
-server.listen(app.get('port'), function () {
-    console.log('Express server listening on port ' + app.get('port'));
+server.listen(app.get('port'), function() {
+  console.log('Express server listening on port ' + app.get('port'));
 });
 
-io.on('connection', function(socket){
+io.on('connection', function(socket) {
   console.log('a user connected');
 });
-
-
