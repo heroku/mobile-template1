@@ -46,11 +46,8 @@ module.exports = function(models) {
       return res.status(400).send("Password must be at least 3 characters");
     }
 
-
     console.log("Registering ", user);
-    new models.User({
-      email: user.email
-    }).fetch().then(function(model) {
+    models.User.objects.getByEmail(user.email).then(function(model) {
       if (model) {
         return next(Error("That email is already registered"));
       } else {
@@ -63,12 +60,11 @@ module.exports = function(models) {
           delete user['password'];
           delete user['password2'];
 
-          new models.User(user).save().then(function(model) {
+          models.User.objects.create(user).then(function(model) {
             if (register_callback) {
               register_callback(model);
             }
-            res.json(clean_user(model.attributes));
-
+            res.json(clean_user(model));
           }).catch(next);
         });
       }
@@ -78,26 +74,22 @@ module.exports = function(models) {
   function login(req, res, next) {
     var user = req.body;
 
-    new models.User({
-      email: user.email
-    }).fetch().then(function(model) {
+    models.User.objects.getByEmail(user.email).then(function(model) {
       if (!model) {
         return res.status(401).send("Invalid credentials");
       }
 
-      console.log("Compare user ", user, " to model ", model.attributes);
+      console.log("Compare user ", user, " to model ", model);
 
-      comparePassword(user.password, model.get("crypted_password"), function(err, match) {
+      comparePassword(user.password, model.crypted_password, function(err, match) {
         if (err) {
           console.log(err);
           return res.status(401).send("Invalid Credentials");
         }
         if (match) {
-          model.token = uuid.v4();
-
-          model.save().then(function(model) {
-            res.json(clean_user(model.attributes));
-
+          models.User.objects.update(model.id, {token: uuid.v4()}).then(function(model) {
+            console.log('USER MODEL RESPONSE =', model);
+            res.json(clean_user(model));
           }).catch(next);
 
         } else {
@@ -125,9 +117,7 @@ module.exports = function(models) {
       req.user = user_cache[token];
       next();
     } else {
-      new models.User({
-        token: token
-      }).fetch().then(function(model) {
+      models.User.objects.getByToken(token).then(function(model) {
         if (model) {
           user_cache[token] = model;
           req.user = model;

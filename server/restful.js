@@ -1,33 +1,30 @@
 var express = require('express');
+var _ = require('underscore');
 
 module.exports = function(model, resource, options) {
   options = options || {};
 
   var router = express.Router();
   router.get('/' + resource, function(req, res, next) {
-    var select = '*';
+    var select = null;
     if (req.query.select) {
       select = req.query.select;
-      delete req.query['select'];
+      delete req.query.select
     }
-    model.query({
-      select: select
-    }).where(req.query).fetchAll().then(function(collection) {
+    return model.objects.query(select, req.query).then(function(collection) {
       res.json(collection);
     });
   });
 
   router.get('/' + resource + "/:pkid", function(req, res, next) {
     var pkid = req.params.pkid;
-    new model({
-      id: pkid
-    }).fetch().then(function(result) {
+    model.objects.getById(pkid).then(function(result) {
       res.json(result);
     });
   });
 
   function save_item(item, res) {
-    new model(item).save().then(function(row) {
+    model.objects.create(item).then(function(row) {
       res.json(row);
     }).catch(function(err) {
       console.log(err);

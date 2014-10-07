@@ -7,9 +7,7 @@ if (config.orm === 'bookshelf') {
 }
 else {
     var Sequelize = require('sequelize');
-    models = require('./models_sequelize')(new Sequelize(config.db_url, {
-        logging: config.SQL_DEBUG
-    }));
+    models = require('./models_sequelize')(new Sequelize(config.db_url));
 }
 
 module.exports = models;

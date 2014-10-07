@@ -3,13 +3,12 @@ var http           = require('http'),
     express        = require('express'),
     bodyParser     = require('body-parser'),
     methodOverride = require('method-override'),
-    passport       = require('passport')
     path           = require('path'),
     knex           = require('knex')(config.knex_options),
     bookshelf      = require('bookshelf')(knex),
     models         = require('./server/models'),
     notifier       = require('./server/notifier'),
-    restful        = require('./server/bookshelf_rest'),
+    restful        = require('./server/restful'),
     auth           = require('./server/auth')(models),
     force          = require('./server/force')
     ;
@@ -20,7 +19,7 @@ app = express();
 server = http.createServer(app);
 io = require('socket.io')(server);
 
-app.set('bookshelf', bookshelf);
+// app.set('bookshelf', bookshelf);
 
 logger = {
   debug: config.debug,
@@ -68,10 +67,8 @@ function save_answer(req, res, callback) {
 
   answer.user_id = req.user.id;
 
-  new models.Question({
-    id: answer.question_id
-  }).fetch().then(function(q) {
-    if (q.attributes.answer_index == answer.answer_index) {
+  models.Question.objects.getById(answer.question_id).then(function(q) {
+    if (q.answer_index == answer.answer_index) {
 
       io.emit('_every_answer', JSON.stringify({
         user: req.user,
@@ -79,25 +76,18 @@ function save_answer(req, res, callback) {
       }));
       force.add_correct_answer(req.user.get('email'));
 
-      models.Answer.query({
-          select: '*'
-        }).where({
-          question_id: answer.question_id
-        })
-        .fetchAll().then(function(collection) {
-
+      models.Answer.objects.query(null, {question_id: answer.question_id}).then(function(collection) {
           if (collection.length > 0) {
             // soneone already answered this question
             req.user.incrPoints(2);
             res.send('OK');
-
           } else {
             callback(answer);
             req.user.incrPoints(5);
             // Tell everyone the question is answered
             var theAnswer = '';
             try {
-              theAnswer = q.attributes.answers[q.attributes.answer_index - 1];
+              theAnswer = q.answers[q.answer_index - 1];
             } catch (e) {}
             io.emit('answer', JSON.stringify({
               user: req.user,
@@ -120,7 +110,7 @@ function save_answer(req, res, callback) {
 /********************* NOTIFICATIONS *****************************/
 
 auth.on_register(function(user) {
-  force.create_lead(user.get('name'), user.get('email'));
+  force.create_lead(user.name, user.email);
 });
 
 notifier(bookshelf, {
