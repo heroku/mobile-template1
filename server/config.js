@@ -2,6 +2,8 @@ DEBUG = true;
 
 exports.db_client = 'pg';
 exports.db_url = process.env.DATABASE_URL || 'postgresql://localhost/quizlive';
+// sequelize or bookshelf
+exports.orm = 'sequelize';
 exports.DEBUG = DEBUG;
 exports.SQL_DEBUG = false;
 
