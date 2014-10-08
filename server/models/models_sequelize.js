@@ -1,17 +1,15 @@
 var Sequelize = require('sequelize');
 var _ = require('underscore');
-var Q = require('q');
+var Promise = require('bluebird');
 
 module.exports = function(sequelize) {
 
   // only output vanilla objects, not model instances
   var jsonify = function(model){
-    return Q.fcall(function(){
-      if (model && model.toJSON) {
-        return model.toJSON();
-      }
-      return model;
-    });
+    if (model && model.toJSON) {
+      model = model.toJSON();
+    }
+    return Promise.resolve(model);
   };
 
   // users
@@ -51,7 +49,7 @@ module.exports = function(sequelize) {
 
   User.objects = {
     getById: function(id){
-      return User.find(id).then(jsonify);
+      return User.find(id).then(findOne).then(jsonify);
     },
 
     getByEmail: function(email) {
@@ -67,10 +65,14 @@ module.exports = function(sequelize) {
     },
 
     update: function(id, attrs){
-      // TODO: Model.update() only returns a count? Not the instances...
-      // should be able to do this in one query.
       return User.find(id).then(function(u){
         return u.updateAttributes(attrs).then(jsonify);
+      });
+    },
+
+    incrementPoints: function(id, pts) {
+      return User.find(id).then(function(u){
+        return u.increment(['points'], {by: pts}).then(jsonify);
       });
     }
   };
@@ -138,7 +140,7 @@ module.exports = function(sequelize) {
 
   Answer.objects = {
     getById: function(id){
-      return Answer.find(id).then(jsonify);
+      return Answer.find(id).then(findOne).then(jsonify);
     },
 
     create: function(attrs){
@@ -163,52 +165,50 @@ module.exports = function(sequelize) {
   // http handlers
   var activateQuestion = function(req, res, next){
     var id = req.params.questionId;
-    return sequelize.query('UPDATE questions SET show = (id = $1)', null, {raw: true}, [id])
-    .success(function(){
+    sequelize.query('UPDATE questions SET show = (id = $1)', null, {raw: true}, [id])
+    .then(function(){
       res.sendStatus(200);
     })
-    .error(function(){
+    .catch(function(){
       res.sendStatus(500);
     });
   };
 
   var nextQuestion = function(req, res, next){
-    return sequelize.query('UPDATE questions SET show = (id = (select min(id) from questions where show = false and id > (select max(id) from questions where show = true)))', null, {raw: true})
-    .success(function(){
+    sequelize.query('UPDATE questions SET show = (id = (select min(id) from questions where show = false and id > (select max(id) from questions where show = true)))', null, {raw: true})
+    .then(function(){
       res.sendStatus(200);
     })
-    .error(function(){
+    .catch(function(){
       res.sendStatus(500);
     });
   };
 
   var leaders = function(req, res, next){
-    return User.findAll({
+    User.findAll({
       order: 'points DESC',
       attributes: ['id', 'name', 'email', 'points']
     })
-    .success(function(users){
-      res.json(users.toJSON());
+    .then(function(users){
+      res.json(users);
     })
-    .error(function(){
+    .catch(function(){
       res.sendStatus(500);
     });
   };
 
   var clearLeaders = function(req, res, next){
-    return Q.all([
-      Answer.all().then(function(a){
-        return a.destroy();
-      }),
-      User.update({points: 0}),
-      Question.update({show: false}).then(function(){
-        return Question.update({show: true}, {question: 'start'});
-      })
+    // For some reason, update/destroy calls always require a where clause...
+    Promise.all([
+      Answer.destroy({where:['id > ?', 0]}),
+      User.update({points: 0}, {where:['id > ?', 0]}),
+      Question.update({show: false}, {where:['id > ?', 0]})
+        .then(Question.update({show: true}, {where:{question: 'start'}}))
     ])
-    .done(function(){
+    .then(function(){
       res.sendStatus(200);
     })
-    .fail(function(){
+    .catch(function(){
       res.sendStatus(500);
     });
   };

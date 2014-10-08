@@ -1,15 +1,13 @@
-var Q = require('q');
+var Promise = require('bluebird');
 
 module.exports = function(bookshelf) {
 
   // only output vanilla objects, not model instances
   var jsonify = function(model){
-    return Q.fcall(function(){
-      if (model && model.toJSON) {
-        return model.toJSON();
-      }
-      return model;
-    });
+    if (model && model.toJSON) {
+      model = model.toJSON();
+    }
+    return Promise.resolve(model);
   };
 
   // users
@@ -55,6 +53,12 @@ module.exports = function(bookshelf) {
 
     update: function(id, attrs){
       return new User({id: id}).save(attrs, {patch: true}).then(jsonify);
+    },
+
+    incrementPoints: function(id, pts) {
+      return new User({id: id})fetch().then(function(u){
+        return u.incrPoints(pts);
+      });
     }
   };
 

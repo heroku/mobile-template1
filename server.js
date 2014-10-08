@@ -69,21 +69,24 @@ function save_answer(req, res, callback) {
 
   models.Question.objects.getById(answer.question_id).then(function(q) {
     if (q.answer_index == answer.answer_index) {
-
       io.emit('_every_answer', JSON.stringify({
         user: req.user,
         correct: true
       }));
-      force.add_correct_answer(req.user.get('email'));
+      force.add_correct_answer(req.user.email);
 
       models.Answer.objects.query(null, {question_id: answer.question_id}).then(function(collection) {
-          if (collection.length > 0) {
-            // soneone already answered this question
-            req.user.incrPoints(2);
+        if (collection.length > 0) {
+          // soneone already answered this question
+          models.User.objects.incrementPoints(req.user.id, 2).then(function(){
             res.send('OK');
-          } else {
+          });
+        }
+        else {
+          // first to answer correct
+          models.User.objects.incrementPoints(req.user.id, 5).then(function(){
             callback(answer);
-            req.user.incrPoints(5);
+
             // Tell everyone the question is answered
             var theAnswer = '';
             try {
@@ -94,16 +97,20 @@ function save_answer(req, res, callback) {
               question_id: answer.question_id,
               answer: theAnswer
             }));
-          }
-        });
+          }).catch(function(){
+            res.sendStatus(500);
+          });
+        }
+      });
     } else {
       io.emit('_every_answer', JSON.stringify({
         user: req.user,
         correct: false
       }));
       res.status(500).json(q);
-      console.log("ERROR!! ", answer);
     }
+  }).catch(function(){
+    res.sendStatus(500);
   });
 }
 
@@ -115,18 +122,15 @@ auth.on_register(function(user) {
 
 notifier(bookshelf, {
   'questions': function(question_id) {
-    new models.Question({
-        id: question_id
-      })
-      .fetch()
-      .then(function(question) {
-        if (question.get('show')) {
-          question.set('answer_index', null);
-          question.set('question_index', 0);
-          question.set('question_total', 10);
-          io.emit('questions', JSON.stringify(question));
-        }
-      });
+    models.Question.objects.getById(question_id)
+    .then(function(question) {
+      if (question.show) {
+        question.answer_index = null;
+        question.question_index = 0;
+        question.question_total = 10;
+        io.emit('questions', JSON.stringify(question));
+      }
+    });
   }
 })
 

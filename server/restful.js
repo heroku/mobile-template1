@@ -11,6 +11,16 @@ module.exports = function(model, resource, options) {
       select = req.query.select;
       delete req.query.select
     }
+
+    for (var key in req.query) {
+      if (req.query[key] === 'true') {
+        req.query[key] = true;
+      }
+      else if (req.query[key] === 'false') {
+        req.query[key] = false;
+      }
+    }
+
     return model.objects.query(select, req.query).then(function(collection) {
       res.json(collection);
     });
