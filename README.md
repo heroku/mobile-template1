@@ -21,6 +21,14 @@ player.
 Notification of new questions and answer results are broadcast via Websocket to the
 mobile app using the SocketIO library.
 
+**Game screenshot**
+
+<img src="docs/game_shot.png" />
+
+** Admin screenshot **
+
+<img src="docs/admin_shot.png" />
+
 ## Architecture
 
 The app has two major pieces: An AngularJS based client app which comprises the front-end
@@ -118,7 +126,7 @@ Angular
 
 As an option, the app can be configured so that each person who registers to play is
 recorded as a Lead record in Salesforce. This template shows how to access the 
-Force.com API to exchange data with a Salesforce account. See [FORCE_README](FORCE_README.md) 
+Force.com API to exchange data with a Salesforce account. See [FORCE_README](docs/FORCE_README.md) 
 for full instructions. 
 
 # Debugging
