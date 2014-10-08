@@ -49,7 +49,7 @@ module.exports = function(sequelize) {
 
   User.objects = {
     getById: function(id){
-      return User.find(id).then(findOne).then(jsonify);
+      return User.find(id).then(jsonify);
     },
 
     getByEmail: function(email) {
@@ -140,7 +140,7 @@ module.exports = function(sequelize) {
 
   Answer.objects = {
     getById: function(id){
-      return Answer.find(id).then(findOne).then(jsonify);
+      return Answer.find(id).then(jsonify);
     },
 
     create: function(attrs){
