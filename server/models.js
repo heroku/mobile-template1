@@ -45,13 +45,13 @@ module.exports = function(bookshelf) {
   }
 
   function next_question(req, res, next) {
-    var idWhere = '(select min(id) from questions where show = false and id > (select max(id) from questions where show = true))';
+    var idWhere = '(select min(id) from questions where (show = false or show is null) and id > (select max(id) from questions where show = true))';
     return bookshelf.knex('questions').update({
         'show': bookshelf.knex.raw('(id = ' + idWhere + ')')
       })
       .then(function() {
         res.send('OK');
-      });
+      }).catch(next);
   }
 
   function leaders(req, res, next) {

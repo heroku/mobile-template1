@@ -43,13 +43,13 @@ user registration, data storage, and event broadcast.
            |
        [Postgres DB]
 
-## Deployment
+# Deployment
 
 The app can be deployed to Heroku, and distributed to the mobile device either through
 the mobile web browser, or by compiling the AngularJS application into a native app
 using an Apach Cordova container.
 
-## Installation and setup
+# Installation and setup
 
 Clone this repo to your local machine and install the requirements:
 
@@ -68,10 +68,27 @@ and open the client app:
 
     http://localhost:5000
 
-## Deploy to Heroku
+From the home screen click "Register". Enter your name and email and click `Register`. The first user
+is automatically marked as the adminstrator. Click the _Open Admin Page_ link on the quiz page.
+
+On the admin page, use the following controls
+ 
+`Next Question` - queue up the next quiz question
+`Restart Quiz` - erase all current scores and start over
+
+As you click `Next Question` a new question will appear automatically for anyone running
+the app. Additional users can register for the app and play at the same time. Users accumulate
+points by answering questions correctly, with a bonus awarded to the person who answers
+correctly first.
+
+
+# Deploy to Heroku
 
 When you are ready to share the app, just create a new Heroku app, provision a Postgres
-database addon for your app, and then deploy the code.
+database addon for your app, and then deploy the code. After you deploy you should
+bootstrap the database:
+
+    $ heroku run ./bootstrap.sh
 
 # Understanding the code
 
@@ -115,7 +132,7 @@ so the server starts:
 
     $ node-debug server.js
 
-    
+
 # Building a native app
 
 To bundle your client app as a native mobile app, you can use the Cordova tool. Note that to build

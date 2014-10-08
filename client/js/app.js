@@ -12,9 +12,9 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
   };
 
   if ($rootScope.user.is_admin) {
-    AuthenticationService.is_admin = true;
+    AuthenticationService.isAdmin = true;
   }
-  
+
   $rootScope.$on("$stateChangeStart", function(event, toState) {
     //redirect only if both isAuthenticated is false and no token is set
 
