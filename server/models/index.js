@@ -3,7 +3,8 @@ var models;
 
 if (config.orm === 'bookshelf') {
     var knex = require('knex')(config.knex_options);
-    models = require('./models_bookshelf')(knex);
+    var bookshelf = require('bookshelf')(knex)
+    models = require('./models_bookshelf')(bookshelf);
 }
 else {
     var Sequelize = require('sequelize');

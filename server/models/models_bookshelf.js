@@ -1,7 +1,7 @@
 var Promise = require('bluebird');
 
 module.exports = function(bookshelf) {
-
+  var knex = bookshelf.knex;
   // only output vanilla objects, not model instances
   var jsonify = function(model){
     if (model && model.toJSON) {
@@ -56,7 +56,7 @@ module.exports = function(bookshelf) {
     },
 
     incrementPoints: function(id, pts) {
-      return new User({id: id})fetch().then(function(u){
+      return new User({id: id}).fetch().then(function(u){
         return u.incrPoints(pts);
       });
     }
@@ -82,7 +82,7 @@ module.exports = function(bookshelf) {
 
     query: function(columns, attrs){
       columns = columns || '*';
-      return Question.query({select: select}).where(attrs).fetchAll().then(jsonify);
+      return Question.query({select: columns}).where(attrs).fetchAll().then(jsonify);
     }
   };
 

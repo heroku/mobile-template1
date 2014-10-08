@@ -5,7 +5,6 @@ var http           = require('http'),
     methodOverride = require('method-override'),
     path           = require('path'),
     knex           = require('knex')(config.knex_options),
-    bookshelf      = require('bookshelf')(knex),
     models         = require('./server/models'),
     notifier       = require('./server/notifier'),
     restful        = require('./server/restful'),
@@ -18,8 +17,6 @@ var http           = require('http'),
 app = express();
 server = http.createServer(app);
 io = require('socket.io')(server);
-
-// app.set('bookshelf', bookshelf);
 
 logger = {
   debug: config.debug,
@@ -120,7 +117,7 @@ auth.on_register(function(user) {
   force.create_lead(user.name, user.email);
 });
 
-notifier(bookshelf, {
+notifier({
   'questions': function(question_id) {
     models.Question.objects.getById(question_id)
     .then(function(question) {

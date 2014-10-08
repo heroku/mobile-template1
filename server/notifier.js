@@ -1,7 +1,8 @@
 var pg = require('pg');
+var config = require('./config');
 
-module.exports = function(bookshelf, topic_callbacks) {
-  pg.connect(bookshelf.knex.client.connectionSettings, function(err, client) {
+module.exports = function(topic_callbacks) {
+  pg.connect(config.db_url, function(err, client) {
     if (err) {
       console.log("Notifier, error connecting to database: " + err);
     } else {
