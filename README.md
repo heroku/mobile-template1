@@ -89,12 +89,68 @@ The components of the application are organized as follows:
 | ..question list | server/load_question.js |
 | admin app  | admin  |
 
-# Accessing Force.com
+## Front-end app
+
+The front-end app is an AngularJS single page application. Thus all the HTML and Javascripted
+are loaded and run in a single WebView control on the phone. Different screens and navigation
+are all drawn in the browser DOM.
+
+Angular
+
+## Accessing Force.com
 
 As an option, the app can be configured so that each person who registers to play is
 recorded as a Lead record in Salesforce. This template shows how to access the 
 Force.com API to exchange data with a Salesforce account. See [FORCE_README](FORCE_README.md) 
 for full instructions. 
+
+# Debugging
+
+Install `node-debug` to use the Chrome debugger with Node.js:
+
+    $ npm install node-debug
+
+And to use, just run with `node-debugger`. After the Chrome debugger opens, make sure to click `Run`
+so the server starts:
+
+    $ node-debug server.js
+
+    
+# Building a native app
+
+To bundle your client app as a native mobile app, you can use the Cordova tool. Note that to build
+a native app you will need the corresponding native build tools. So for iOS apps you will need
+Xcode installed, and for Android apps you will need to have the Android SDK installed.
+
+Install Cordova:
+
+    $ sudo npm install -g cordova
+
+Install an application simulator:
+
+    $ sudo npm install -g ios-sim
+
+Initialize the wrapper:
+
+    $ mkdir wrapper
+    $ cd wrapper
+    $ cordova create . QuizLive
+    $ rm -rf www
+    $ ln -s ../client www
+
+Now add one or more platform targets:
+
+    $ cordova platform add ios
+    $ cordova platform add android
+
+Now build the native app:
+
+    $ cordova compile ios
+
+And run in the emulator:
+
+    $ cordova run --emulator
+
 
 # Contact
 

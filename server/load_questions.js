@@ -2,12 +2,15 @@ var config = require('./config'),
   knex = require('knex')(config.knex_options),
   Promise = require('knex/lib/promise');
 
-var qs = [{
+var startq = {
   'question': 'start',
-  'answers': ['start'],
+  'answers': JSON.stringify(['start']),
   'answer_index': 1,
   'show': true
-}, {
+};
+
+var qs = [
+{
   'question': 'What was Oscar the Grouch\'s original color?',
   'answers': ['Orange', 'Red', 'Yello'],
   'answer_index': 1
@@ -90,6 +93,8 @@ var qs = [{
 }];
 
 knex('questions').del().then(function() {
+  return knex('questions').insert(startq);
+}).then(function() {
   return Promise.map(qs, function(question) {
     console.log("Creating ", question.question);
     question.answers = JSON.stringify(question.answers);

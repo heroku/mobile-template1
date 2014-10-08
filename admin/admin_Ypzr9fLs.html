@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html ng-app="admin">
+
+<head>
+    <meta charset="utf-8">
+    <title>QuizLive Admin</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+</head>
+
+<body ng-controller="AdminCtrl">
+    <div class="container">
+
+        <div class="page-header">
+            <h1>Quiz Live Admin</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+
+                <h4>
+            Current Question <small ng-show="currentQuestion.question">{{currentQuestion.question_index + 1}} of {{currentQuestion.question_total}}</small>
+          </h4>
+                <p><strong>{{currentQuestion.question}}</strong>
+                </p>
+                <div ng-show="answers && answers.length">
+                    <h5>Answers:</h5>
+                    <ul class="list-group">
+                        <li ng-repeat="answer in answers" ng-class='{"list-group-item list-group-item-success": answer.correct, "list-group-item list-group-item-danger": !answer.correct}'>{{answer.user.name}}</li>
+                    </ul>
+                </div>
+                <p>
+                    <button class="btn btn-primary" ng-click="nextQuestion()">Next Question</button>
+                </p>
+
+                <hr>
+
+                <h4>
+            Leaderboard
+          </h4>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="user in leaders">
+                            <th>{{user.name}}</th>
+                            <td>{{user.points}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    <button class="btn btn-danger" ng-click="clearLeaders()">Restart Quiz</button>
+                </p>
+            </div>
+
+            <div class="col-md-4">
+                <h3>
+            Add Question
+          </h3>
+                <form>
+                    <div class="form-group">
+                        <label for="form-question">Question</label>
+                        <p class="alert alert-danger" ng-show="!questionErrors.question">
+                            <strong>Error!</strong> Please supply a question.
+                        </p>
+                        <input type="text" class="form-control" id="form-question" ng-model="question.question" placeholder="Enter question...">
+                    </div>
+
+                    <label>Answers</label>
+                    <p>Select the radio next to the correct answer.</p>
+                    <p class="alert alert-danger" ng-show="!questionErrors.answers">
+                        <strong>Error!</strong> Please supply at least one correct answer.
+                    </p>
+
+                    <div class="form-group" ng-repeat="item in questionAnswers">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                  <input type="radio" ng-model="question.answer_index" ng-value="$index">
+                </span>
+                            <input type="text" class="form-control" ng-model="questionAnswers[$index].text" placeholder="Enter answer...">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-default" ng-click="addAnswer()">Add Answer</button>
+                    <button class="btn btn-primary" ng-click="saveQuestion()">Save</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="lib/ionic/js/angular/angular-resource.js"></script>
+
+    <!-- your app's js -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/admin_app.js"></script>
+    <script src="js/services.js"></script>
+
+</body>
+
+</html>

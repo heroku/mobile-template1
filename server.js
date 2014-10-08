@@ -30,6 +30,7 @@ logger = {
 
 app.use(bodyParser());
 app.use(methodOverride());
+
 app.use(express.static(path.join(__dirname, 'client/')));
 app.use(express.static(path.join(__dirname, 'admin/')));
 app.use(express.static(path.join(__dirname, 'server/pages')));
@@ -47,6 +48,12 @@ app.use(function(err, req, res, next) {
 
 
 /********************* ROUTES *****************************/
+// Simple hack to only allow admin to load the admin page.
+app.get('/admin', auth.authenticate, auth.require_admin, function (req, res) {
+  res.set('Location', '/admin_Ypzr9fLs.html');
+  return res.send('OK');
+});
+
 
 app.use('/register', auth.register);
 app.use('/login', auth.login);
@@ -57,10 +64,10 @@ app.use('/resource', restful(models.Question, 'questions'));
 app.use('/resource', restful(models.Answer, 'answers', {
   pre_save: save_answer
 }));
-app.post('/resource/questions/:questionId/activate', models.activate_question);
-app.post('/resource/questions/:questionId/next', models.next_question);
-app.get('/resource/leaders', models.leaders);
-app.delete('/resource/leaders', auth.clear_leaders);
+app.post('/resource/questions/:questionId/activate', auth.require_admin, models.activate_question);
+app.post('/resource/questions/:questionId/next', auth.require_admin, models.next_question);
+app.get('/resource/leaders', auth.require_admin, models.leaders);
+app.delete('/resource/leaders', auth.require_admin, auth.clear_leaders);
 
 function save_answer(req, res, callback) {
   var answer = req.body;

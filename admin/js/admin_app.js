@@ -1,4 +1,10 @@
 angular.module('admin', ['starter.services', 'ngResource'])
+.controller('AdminBootCtrl', function($window, $location, $http) {
+  $http({method:'GET', url: '/admin'}).success(function(data, status, headers) {
+    window.location = headers('Location');
+    console.log(headers('Location'));
+  });
+})
 
 .controller('AdminCtrl', function($window, $scope, SocketIO, Question, Answer, SocketIO) {
   // question creation

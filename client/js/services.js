@@ -83,9 +83,13 @@ angular.module('starter.services', [])
         password: password
       }).then(function(result) {
         $rootScope.user = result.data;
+        console.log(result.data);
         AuthenticationService.isAuthenticated = true;
-        $window.sessionStorage.name = result.data.name;
-        $window.localStorage.token = result.data.token;
+        AuthenticationService.isAdmin = result.data.is_admin;
+
+        $window.sessionStorage.name     = result.data.name;
+        $window.sessionStorage.is_admin = result.data.is_admin;
+        $window.localStorage.token      = result.data.token;
       }).catch(function(err) {
         $ionicPopup.alert({
           title: 'Failed',
@@ -102,8 +106,9 @@ angular.module('starter.services', [])
       return $http.post('/register', user).then(function(result) {
         $rootScope.user = result.data;
         AuthenticationService.isAuthenticated = true;
-        $window.sessionStorage.name = result.data.name;
-        $window.localStorage.token = result.data.token;
+        $window.sessionStorage.name     = result.data.name;
+        $window.sessionStorage.is_admin = result.data.is_admin;
+        $window.localStorage.token      = result.data.token;
         console.log(result.data);
       }).catch(function(err) {
         $ionicPopup.alert({

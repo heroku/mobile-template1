@@ -9,14 +9,16 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('QuizCtrl', function($scope, $ionicPopup, $ionicLoading, SocketIO, Question, Answer, RegistrationService, UserResponse) {
+.controller('QuizCtrl', function($scope, $ionicPopup, $ionicLoading, SocketIO, Question, Answer, 
+                                 AuthenticationService, RegistrationService, UserResponse) {
   $scope.q = {};
   $scope.q.answers = ['one', 'two', 'three'];
   $scope.answer = null;
   $scope.show_leaders = false;
   $scope.correct_answer = null;
   $scope.answerIndex = false;
-
+  $scope.is_admin = AuthenticationService.isAdmin;
+  
   $scope.hasAnswered = function() {
     // Has the user answered the current question already?
     return UserResponse.get($scope.q.id) !== undefined;

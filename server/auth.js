@@ -145,10 +145,18 @@ module.exports = function(models) {
     return models.clear_leaders(req, res, next);
   }
 
+  function require_admin(req, res, next) {
+    if (!req.user.get('is_admin')) {
+      res.status(401).send("Unauthorized");
+    } else {
+      return next();
+    }
+  }
 
   return {
     register: register,
     login: login,
+    require_admin: require_admin,
     on_register: on_register,
     authenticate: authenticate,
     clear_leaders: clear_leaders

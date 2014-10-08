@@ -7,9 +7,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 
 .run(function($window, $location, $ionicPlatform, $rootScope, AuthenticationService) {
   $rootScope.user = {
-    name: $window.sessionStorage.name
+    name: $window.sessionStorage.name,
+    is_admin: $window.sessionStorage.is_admin
   };
 
+  if ($rootScope.user.is_admin) {
+    AuthenticationService.is_admin = true;
+  }
+  
   $rootScope.$on("$stateChangeStart", function(event, toState) {
     //redirect only if both isAuthenticated is false and no token is set
 
