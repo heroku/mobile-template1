@@ -62,7 +62,7 @@ angular.module('starter.controllers', [])
 
   Question.query({
     show: true,
-    select: ['question', 'answers']
+    select: ['id', 'question', 'answers', 'answer_index']
   }, function(rows) {
     $scope.q = rows[0];
     $scope.answerIndex = true;

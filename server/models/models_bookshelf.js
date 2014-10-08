@@ -106,7 +106,7 @@ module.exports = function(bookshelf) {
 
     query: function(columns, attrs){
       columns = columns || '*';
-      return Answer.query({select: select}).where(attrs).fetchAll().then(jsonify);
+      return Answer.query({select: columns}).where(attrs).fetchAll().then(jsonify);
     }
   };
 
