@@ -25,7 +25,8 @@ mobile app using the SocketIO library.
 
 <img src="docs/game_shot.png" />
 
-** Admin screenshot **
+
+**Admin screenshot**
 
 <img src="docs/admin_shot.png" />
 

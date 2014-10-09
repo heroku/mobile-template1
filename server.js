@@ -66,7 +66,7 @@ app.use('/resource', restful(models.Answer, 'answers', {
 }));
 app.post('/resource/questions/:questionId/activate', auth.require_admin, models.activate_question);
 app.post('/resource/questions/:questionId/next', auth.require_admin, models.next_question);
-app.get('/resource/leaders', auth.require_admin, models.leaders);
+app.get('/resource/leaders', models.leaders);
 app.delete('/resource/leaders', auth.require_admin, auth.clear_leaders);
 
 function save_answer(req, res, callback) {
