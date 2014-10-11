@@ -56,7 +56,7 @@ user registration, data storage, and event broadcast.
 
 The app can be deployed to Heroku, and distributed to the mobile device either through
 the mobile web browser, or by compiling the AngularJS application into a native app
-using an Apach Cordova container.
+using an Apache Cordova container.
 
 # Installation and setup
 
