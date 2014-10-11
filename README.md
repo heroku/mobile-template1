@@ -65,7 +65,11 @@ Clone this repo to your local machine and install the requirements:
     npm install
 
 Now create a database on your local server called
-`quizlive`. Now create the database schema and initial data:
+`quizlive`:
+
+    createdb quizlive
+
+Now create the database schema and initial data:
 
     ./bootstrap.sh
 
