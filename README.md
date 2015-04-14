@@ -181,6 +181,13 @@ And run in the emulator:
 
     $ cordova run --emulator
 
+## Fixing AJAX calls
+
+The Ajax calls used in the Angular client are written using simple relative paths. This means that they automatically use the `host` value inferred from the domain which served the client JS files. This all works properly when the client app is served from a web server.
+
+However, when you package the client files into the Cordova wrapper, then they are provided to the mobile device from the local filesystem, rather than being served from the web. As a result there is no `domain` to tell the Ajax calls where to go. To correct this, you need to specify your web domain explicitly in all client Ajax calls, such as the login call:
+
+https://github.com/heroku/mobile-template1/blob/master/client/js/services.js#L80
 
 # Contact
 
