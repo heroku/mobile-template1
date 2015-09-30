@@ -82,7 +82,7 @@ and open the client app:
     http://localhost:5000
 
 From the home screen click "Register". Enter your name and email and click `Register`. The first user
-is automatically marked as the adminstrator. Click the _Open Admin Page_ link on the quiz page.
+is automatically marked as the administrator. Click the _Open Admin Page_ link on the quiz page.
 
 On the admin page, use the following controls
  
