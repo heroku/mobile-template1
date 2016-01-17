@@ -22,7 +22,7 @@ Now setup the following environment variables:
 
     SF_OAUTH_CLIENT_ID - Oauth consumer key
     SF_OAUTH_CLIENT_SECRET - Oauth consumer secret
-    SF_REDIRECT_URI - Oauth redirect URI. Whatever you entered into Salesforce.
+    SF_OAUTH_REDIRECT_URI - Oauth redirect URI. Whatever you entered into Salesforce.
     SF_USERNAME - Username of the Salesforce user
     SF_PASSWWORD - Password of the Salesforce user
     SF_TOKEN - Security token for the Salesforce user
