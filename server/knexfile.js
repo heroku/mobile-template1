@@ -8,4 +8,9 @@ module.exports = {
     connection: config.db_url
   },
 
+  production: {
+    client: 'pg',
+    connection: config.db_url
+  }
+
 };
